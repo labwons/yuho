@@ -7,8 +7,14 @@
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 # User-Env
+.idea
 .idea/misc.xml
-.idea/pages.iml
+.idea/yuho.iml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/workspace.xml
+.idea/.gitignore
+.idea/inspectionProfiles
 
 # User-specific stuff
 .idea/**/workspace.xml
