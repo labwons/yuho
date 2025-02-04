@@ -10,11 +10,11 @@ class PATH:
     except NameError:
         ROOT = 'https://raw.githubusercontent.com/labwons/yuho/main/'
 
-    GROUP  = os.path.join(ROOT, r'docs/json/marketmap/marketmap.json')
-    STATE  = os.path.join(ROOT, r'docs/json/marketmap/state.json')
-    PRICE  = os.path.join(ROOT, r'docs/json/marketmap/price.json')
-    SPECS  = os.path.join(ROOT, r'docs/json/marketmap/specs.json')
-    INDEX  = os.path.join(ROOT, r'docs/json/macro/index.json')
+    GROUP  = os.path.join(ROOT, r'docs/json/market/market.json')
+    STATE  = os.path.join(ROOT, r'docs/json/market/state.json')
+    PRICE  = os.path.join(ROOT, r'docs/json/market/price.json')
+    SPECS  = os.path.join(ROOT, r'docs/json/market/specs.json')
+    INDEX  = os.path.join(ROOT, r'docs/json/market/index.json')
     BUBBLE = os.path.join(ROOT, r'docs/json/service/bubble.json')
     TRMAP  = os.path.join(ROOT, r'docs/json/service/treemap.json')
     MACRO  = os.path.join(ROOT, r'docs/json/service/macro.json')
