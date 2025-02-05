@@ -1,8 +1,8 @@
 try:
     from ...common.path import PATH
-    from ...module.ecos.generic import Ecos
-    from ...module.wise.core import CDSEC
-    from ...module.wise.generic import Indices
+    from ...fetch.ecos.generic import Ecos
+    from ...fetch.wise.core import CDSEC
+    from ...fetch.wise.generic import Indices
 except ImportError:
     from dev.common.path import PATH
     from dev.module.ecos.generic import Ecos

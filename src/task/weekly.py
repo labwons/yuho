@@ -1,5 +1,5 @@
 try:
-    from ..module.fng.generic import Stat
+    from ..fetch.fng.generic import Stat
 except ImportError:
     from dev.module.fng.generic import Stat
 

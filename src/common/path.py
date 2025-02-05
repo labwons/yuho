@@ -1,7 +1,5 @@
-import os
-
-
 class PATH:
+    import os
 
     try:
         ROOT = os.path.dirname(__file__)
@@ -10,20 +8,22 @@ class PATH:
     except NameError:
         ROOT = 'https://raw.githubusercontent.com/labwons/yuho/main/'
 
-    GROUP  = os.path.join(ROOT, r'docs/json/market/market.json')
-    STATE  = os.path.join(ROOT, r'docs/json/market/state.json')
-    PRICE  = os.path.join(ROOT, r'docs/json/market/price.json')
-    SPECS  = os.path.join(ROOT, r'docs/json/market/specs.json')
-    INDEX  = os.path.join(ROOT, r'docs/json/market/index.json')
-    BUBBLE = os.path.join(ROOT, r'docs/json/service/bubble.json')
-    TRMAP  = os.path.join(ROOT, r'docs/json/service/treemap.json')
-    MACRO  = os.path.join(ROOT, r'docs/json/service/macro.json')
     try:
         DESKTOP = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
         DOWNLOADS = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Downloads')
     except KeyError:
         DESKTOP = DOWNLOADS = ROOT
-    
+
+    GROUP  = os.path.join(ROOT, r'src/fetch/market/json/group.json')
+    STATE  = os.path.join(ROOT, r'src/fetch/market/json/state.json')
+    PRICE  = os.path.join(ROOT, r'src/fetch/market/json/price.json')
+    SPECS  = os.path.join(ROOT, r'src/fetch/market/json/specs.json')
+    INDEX  = os.path.join(ROOT, r'src/fetch/market/json/index.json')
+
+    BUBBLE = os.path.join(ROOT, r'docs/src/json/bubble.json')
+    MAP    = os.path.join(ROOT, r'docs/src/json/treemap.json')
+    MACRO  = os.path.join(ROOT, r'docs/src/json/macro.json')
+
 
 
 if __name__ == "__main__":
@@ -33,4 +33,4 @@ if __name__ == "__main__":
     print(PATH.PRICE)
     print(PATH.SPECS)
     print(PATH.INDEX)
-    print(PATH.TRMAP)
+    print(PATH.MAP)

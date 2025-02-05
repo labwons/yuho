@@ -1,8 +1,8 @@
 try:
     from ...common.path import PATH
-    from ...module.fng.generic import Stat
-    from ...module.wise.generic import Groups
-    from ...module.krx.generic import Price
+    from ...fetch.fng.generic import Stat
+    from ...fetch.wise.generic import Groups
+    from ...fetch.krx.generic import Price
     from .core import RELTs, num2cap
 except ImportError:
     from dev.module.fng.generic import Stat

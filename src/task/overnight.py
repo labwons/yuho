@@ -1,7 +1,7 @@
 try:
     from ..common.logger import Log
     from ..common.calendar import Calendar
-    from ..module.wise.generic import Groups
+    from ..fetch.wise.generic import Groups
     from .macro.generic import Macro
 except ImportError:
     from dev.common.calendar import Calendar
