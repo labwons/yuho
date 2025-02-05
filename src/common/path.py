@@ -16,7 +16,6 @@ class PATH:
 
     GROUP  = os.path.join(ROOT, r'src/fetch/market/json/group.json')
     STATE  = os.path.join(ROOT, r'src/fetch/market/json/state.json')
-    PRICE  = os.path.join(ROOT, r'src/fetch/market/json/price.json')
     SPECS  = os.path.join(ROOT, r'src/fetch/market/json/specs.json')
     INDEX  = os.path.join(ROOT, r'src/fetch/market/json/index.json')
 
@@ -30,7 +29,6 @@ if __name__ == "__main__":
     print(PATH.ROOT)
     print(PATH.GROUP)
     print(PATH.STATE)
-    print(PATH.PRICE)
     print(PATH.SPECS)
     print(PATH.INDEX)
     print(PATH.MAP)
