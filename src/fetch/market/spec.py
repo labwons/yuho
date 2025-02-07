@@ -4,7 +4,7 @@ except ImportError:
     from src.common.path import PATH
 from datetime import datetime
 from io import StringIO
-from numpy import nan, inf, isnan
+from numpy import nan, isnan
 from pandas import (
     concat,
     DataFrame,
@@ -51,6 +51,7 @@ class MarketSpec(DataFrame):
         stime = time()
         if not update:
             super().__init__(read_json(PATH.SPEC, orient='index'))
+            self.index = self.index.astype(str).str.zfill(6)
             return
 
         date = datetime.today().strftime("%Y%m%d")
@@ -75,20 +76,13 @@ class MarketSpec(DataFrame):
                     continue
 
                 Aa, Qq = self.customizeStatement(A), self.customizeStatement(Q)
-                # trailingRevenue = Qq[Qq.columns[0]].sum()
-                # trailingEps = Qq['EPS(원)'].sum()
-                # if len(Q) < 4:
-                #     trailingRevenue = self._interpolate_sum(Qq[Qq.columns[0]])
-                #     trailingEps = self._interpolate_sum(Qq['EPS(원)'])
-
-                # obj['high52'] = max([cur['close'], obj['high52']])
-                # obj['low52'] = min(cur['close'], obj['low52'])
-                # obj['pct52wHigh'] = 100 * (cur['close'] / obj['high52'] - 1)
-                # obj['pct52wLow'] = 100 * (cur['close'] / obj['low52'] - 1)
-                # obj['pctEstimated'] = 100 * (cur['close'] / obj['estPrice'] - 1)
-                # obj['estimatedPE'] = cur['close'] / obj['estEps'] if obj['estEps'] else nan
-                # obj['trailingPS'] = (cur['marketCap'] / 1e+8) / trailingRevenue
-                # obj['trailingPE'] = cur['close'] / trailingEps if trailingEps else nan
+                trailingRevenue = Qq[Qq.columns[0]].sum()
+                trailingEps = Qq['EPS(원)'].sum()
+                if len(Q) < 4:
+                    trailingRevenue = self._interpolate_sum(Qq[Qq.columns[0]])
+                    trailingEps = self._interpolate_sum(Qq['EPS(원)'])
+                obj['trailingRevenue'] = trailingRevenue
+                obj['trailingEps'] = trailingEps
                 obj['averageRevenueGrowth_A'] = Aa['revenueGrowth'].mean()
                 obj['averageProfitGrowth_A'] = Aa['profitGrowth'].mean()
                 obj['averageEpsGrowth_A'] = Aa['epsGrowth'].mean()
@@ -100,18 +94,11 @@ class MarketSpec(DataFrame):
                 obj['EpsGrowth_Q'] = Qq.iloc[-1]['epsGrowth']
                 obj['fiscalDividends'] = Aa.iloc[-1]['배당수익률(%)']
                 obj['fiscalDebtRatio'] = Aa.iloc[-1]['부채비율(%)']
-
-                # invOrDivByZeroProtection = ['trailingPS', 'trailingPE', 'estimatedPE']
-                # for col in invOrDivByZeroProtection:
-                #     if (obj[col] <= 0) | (obj[col] == inf):
-                #         obj[col] = nan
-
                 objs.append(obj)
             except Exception as e:
                 self.log = f'... Failed to fetch: {ticker}'
 
         super().__init__(concat(objs, axis=1).T)
-        # self.drop(columns=["high52", "low52", "estPrice", "estEps"], inplace=True)
         for col in self:
             self[col] = round(self[col], 4 if col == 'beta' else 2)
 
@@ -223,5 +210,5 @@ class MarketSpec(DataFrame):
 
 if __name__ == "__main__":
     marketSpec = MarketSpec(True)
-    print(marketSpec)
+    # print(marketSpec)
     print(marketSpec.log)

@@ -22,6 +22,9 @@ from requests import get
 from requests.exceptions import JSONDecodeError, SSLError
 from time import time
 from typing import Dict, Iterable, List
+from warnings import simplefilter
+simplefilter(action='ignore', category=FutureWarning)
+
 
 IPO_LABEL:Dict[str, str] = {
     '회사명':'name', '종목코드':'ticker',
