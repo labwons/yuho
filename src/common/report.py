@@ -5,30 +5,58 @@ from smtplib import SMTP
 
 class eMail(MIMEMultipart):
 
-    SENDER:str = 'snob.labwons@gmail.com'
-    ATTACH:str = ''
+    _context:str = ''
 
-    def __init__(self, subject:str, to:str):
+    def __init__(self):
         super().__init__()
-        self['Subject'] = subject
-        self['From'] = self.SENDER
-        self['To'] = to
+        self['From'] = 'snob.labwons@gmail.com'
+        self['To'] = 'jhlee_0319@naver.com'
         return
 
     @property
-    def attachment(self) -> str:
-        return self.ATTACH
+    def subject(self) -> str:
+        return self['Subject']
 
-    @attachment.setter
-    def attachment(self, attachment:str):
-        self.ATTACH = attachment
+    @subject.setter
+    def subject(self, subject:str):
+        self['Subject'] = subject
+
+    @property
+    def sender(self):
+        return self['From']
+
+    @sender.setter
+    def sender(self, sender:str):
+        self['From'] = sender
+
+    @property
+    def receiver(self):
+        return self['To']
+
+    @receiver.setter
+    def receiver(self, receiver:str):
+        self['To'] = receiver
+
+    @property
+    def context(self) -> str:
+        return self._context
+
+    @context.setter
+    def context(self, context:str):
+        self._context = context
 
     def send(self):
-        self.attach(MIMEText(self.attachment))
+        self.attach(MIMEText(self.context))
         with SMTP('smtp.gmail.com', 587) as server:
             server.ehlo()
             server.starttls()
-            server.login(self.SENDER, "puiz yxql tnoe ivaa")
+            server.login(self.sender, "puiz yxql tnoe ivaa")
             server.send_message(self)
         return
 
+
+if __name__ == "__main__":
+    mail = eMail()
+    mail.subject = "Test Email"
+    mail.context = "This is a test mail"
+    mail.send()

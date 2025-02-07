@@ -20,23 +20,26 @@ if __name__ == "__main__":
     from datetime import datetime
     TODAY = datetime.today().strftime("%Y-%m-%d")[2:]
 
-    group = MarketGroup(update=True)
-    spec = MarketSpec(update=True)
-    index = MarketIndex(update=True)
 
+    group = MarketGroup(update=True)
     if not PATH.GROUP.startswith('http'):
-        with(PATH.GROUP, 'w') as f:
+        with (PATH.GROUP, 'w') as f:
             f.write(group.to_json(orient='index').replace("nan", ""))
+
+    spec = MarketSpec(update=True)
     if not PATH.SPEC.startswith('http'):
-        with(PATH.SPEC, 'w') as f:
+        with (PATH.SPEC, 'w') as f:
             f.write(spec.to_json(orient='index').replace("nan", ""))
+
+    index = MarketIndex(update=True)
     if not PATH.INDEX.startswith('http'):
-        with(PATH.INDEX, 'w') as f:
+        with (PATH.INDEX, 'w') as f:
             f.write(index.to_json(orient='index').replace("nan", ""))
 
     try:
-        mail = eMail(subject=f'UPDATE BASELINE CACHE on {TODAY}', to='jhlee_0319@naver.com')
-        mail.attachment = f"""
+        mail = eMail()
+        mail.subject = f'UPDATE BASELINE CACHE on {TODAY}'
+        mail.context = f"""
 OVERVIEW: 
 - FAIL COUNT: 
   1) MARKET GROUP: {group.log.count("Fail")}
