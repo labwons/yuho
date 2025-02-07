@@ -15,9 +15,9 @@ class PATH:
         DESKTOP = DOWNLOADS = ROOT
 
     GROUP  = os.path.join(ROOT, r'src/fetch/market/json/group.json')
-    STATE  = os.path.join(ROOT, r'src/fetch/market/json/state.json')
-    SPECS  = os.path.join(ROOT, r'src/fetch/market/json/specs.json')
     INDEX  = os.path.join(ROOT, r'src/fetch/market/json/index.json')
+    SPEC  = os.path.join(ROOT, r'src/fetch/market/json/spec.json')
+    STATE  = os.path.join(ROOT, r'src/fetch/market/json/state.json')
 
     BUBBLE = os.path.join(ROOT, r'docs/src/json/bubble.json')
     MAP    = os.path.join(ROOT, r'docs/src/json/treemap.json')
@@ -29,6 +29,6 @@ if __name__ == "__main__":
     print(PATH.ROOT)
     print(PATH.GROUP)
     print(PATH.STATE)
-    print(PATH.SPECS)
+    print(PATH.SPEC)
     print(PATH.INDEX)
     print(PATH.MAP)

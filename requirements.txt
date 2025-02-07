@@ -1,0 +1,12 @@
+bs4
+jsmin
+numpy
+pandas
+pandas_datareader
+plotly
+pykrx
+pytz
+requests
+scipy
+ta
+yfinance
