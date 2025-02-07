@@ -23,17 +23,17 @@ if __name__ == "__main__":
 
     group = MarketGroup(update=True)
     if not PATH.GROUP.startswith('http'):
-        with (PATH.GROUP, 'w') as f:
+        with open(PATH.GROUP, 'w') as f:
             f.write(group.to_json(orient='index').replace("nan", ""))
 
     spec = MarketSpec(update=True)
     if not PATH.SPEC.startswith('http'):
-        with (PATH.SPEC, 'w') as f:
+        with open(PATH.SPEC, 'w') as f:
             f.write(spec.to_json(orient='index').replace("nan", ""))
 
     index = MarketIndex(update=True)
     if not PATH.INDEX.startswith('http'):
-        with (PATH.INDEX, 'w') as f:
+        with open(PATH.INDEX, 'w') as f:
             f.write(index.to_json(orient='index').replace("nan", ""))
 
     try:
