@@ -1,19 +1,25 @@
-try:
-    from ...common.path import PATH
-except ImportError:
-    from src.common.path import PATH
 from pandas import (
     DataFrame,
     concat,
     Index,
     read_json,
+    Series
 )
 from pykrx.stock import get_index_portfolio_deposit_file
 from re import compile
 from requests import get
 from requests.exceptions import JSONDecodeError
 from time import sleep, time
-from typing import Dict, List
+from typing import (
+    Dict,
+    Iterable,
+    List
+)
+if "PATH" not in globals():
+    try:
+        from ...common.path import PATH
+    except ImportError:
+        from src.common.path import PATH
 
 
 SECTOR_CODE:Dict[str, str] = {
@@ -144,7 +150,6 @@ class MarketGroup(DataFrame):
         if not _tickers.empty:
             tickers = [ticker for ticker in _tickers if ticker in tickers]
         return tickers
-
 
 if __name__ == "__main__":
     marketGroup = MarketGroup(True)

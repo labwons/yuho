@@ -1,7 +1,3 @@
-try:
-    from ...common.path import PATH
-except ImportError:
-    from src.common.path import PATH
 from pandas import (
     DataFrame,
     read_json,
@@ -20,6 +16,12 @@ from typing import (
     List
 )
 from warnings import simplefilter
+if "PATH" not in globals():
+    try:
+        from ...common.path import PATH
+    except ImportError:
+        from src.common.path import PATH
+
 simplefilter(action='ignore', category=FutureWarning)
 
 

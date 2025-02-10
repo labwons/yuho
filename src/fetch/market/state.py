@@ -1,7 +1,3 @@
-try:
-    from ...common.path import PATH
-except ImportError:
-    from src.common.path import PATH
 from datetime import datetime, timedelta
 from io import StringIO
 from pandas import (
@@ -22,65 +18,63 @@ from requests import get
 from requests.exceptions import JSONDecodeError, SSLError
 from time import time
 from typing import Dict, Iterable, List
-from warnings import simplefilter
-simplefilter(action='ignore', category=FutureWarning)
 
+if "PATH" not in globals():
+    try:
+        from ...common.path import PATH
+    except ImportError:
+        from src.common.path import PATH
 
-IPO_LABEL:Dict[str, str] = {
-    '회사명':'name', '종목코드':'ticker',
-    '상장일':'ipo', '주요제품':'products', '결산월':'settlementMonth'
+IPO_LABEL: Dict[str, str] = {
+    '회사명': 'name', '종목코드': 'ticker',
+    '상장일': 'ipo', '주요제품': 'products', '결산월': 'settlementMonth'
 }
-CAP_LABEL:Dict[str, str] = {
-    '종가':'close', '시가총액':'marketCap',
-    '거래량':'volume', '거래대금':'amount', '상장주식수':'shares'
+CAP_LABEL: Dict[str, str] = {
+    '종가': 'close', '시가총액': 'marketCap',
+    '거래량': 'volume', '거래대금': 'amount', '상장주식수': 'shares'
 }
-MUL_LABEL:Dict[str, str] = {
-    'PER': 'PER(Q)', 'PBR': 'PBR(Q)', 'DIV': 'DIV(Q)'
+MUL_LABEL: Dict[str, str] = {
+    'PER': 'PER', 'PBR': 'PBR', 'DIV': 'dividendYield'
 }
-PCT_LABEL:Dict[str, str] = {"지분율":'foreignRate'}
-PRC_LABEL:Dict[str, str] = {
-    "시가":"open", "고가":"high", "저가":"low", "종가":"close",
-    "거래량":"volume", "거래대금":"amount"
+PCT_LABEL: Dict[str, str] = {"지분율": 'foreignRate'}
+PRC_LABEL: Dict[str, str] = {
+    "시가": "open", "고가": "high", "저가": "low", "종가": "close",
+    "거래량": "volume", "거래대금": "amount"
 }
-INTERVALS:Dict[str, int] = {
+INTERVALS: Dict[str, int] = {
     'D+0': 0, 'D-1': 1, 'W-1': 7,
     'M-1': 30, 'M-3': 91, 'M-6': 182, 'Y-1': 365
 }
 
 
 class MarketState(DataFrame):
+    _log: List[str] = []
 
-    _log:List[str] = []
-
-    def __init__(self, update:bool=True):
+    def __init__(self, update: bool = True):
         stime = time()
         if not update:
             super().__init__(read_json(PATH.STATE, orient='index'))
+            self.index = self.index.astype(str).str.zfill(6)
             return
 
-        objs = []
         date = get_nearest_business_day_in_a_week()
         self.log = f'Begin [Market State Fetch] @{date}'
 
-        marketCap = self.fetchMarketCap(date)
-        objs.append(marketCap)
-        self.log = f'... Fetch Market Cap :: {"Fail" if marketCap.empty else "Success"}'
-
-        multiples = self.fetchMultiples(date)
-        objs.append(multiples)
-        self.log = f'... Fetch Multiples :: {"Fail" if multiples.empty else "Success"}'
-
-        foreignRate = self.fetchForeignRate(date)
-        objs.append(foreignRate)
-        self.log = f'... Fetch Foreign Rate :: {"Fail" if foreignRate.empty else "Success"}'
-        subset = concat(objs, axis=1)
+        fdef = [self.fetchMarketCap, self.fetchMultiples, self.fetchForeignRate]
+        ks = concat([func(date, 'KOSPI') for func in fdef], axis=1)
+        ks['market'] = 'kospi'
+        self.log = f'... Fetch KOSPI Market State :: {"Fail" if ks.empty else "Success"}'
+        kq = concat([func(date, 'KOSDAQ') for func in fdef], axis=1)
+        kq['market'] = 'kosdaq'
+        self.log = f'... Fetch KOSDAQ Market State :: {"Fail" if kq.empty else "Success"}'
+        market = concat([ks, kq], axis=0)
 
         returns = self.fetchReturns(date)
+        returns = returns[returns.index.isin(self.fetchIpoList().index)]
         self.log = f'... Fetch Returns :: {"Fail" if returns.empty else "Success"}'
 
-        merge = returns.join(subset, how='left')
-        merge = merge[~merge.index.isin(self.fetchKonexList(date))]
-        merge = merge[merge.index.isin(self.fetchIpoList().index)]
+        merge = returns.join(market, how='left')
+        merge = merge.sort_values(by='marketCap', ascending=False)
         super().__init__(merge)
 
         self.log = f'End [Market State Fetch] / Elapsed: {time() - stime:.2f}s'
@@ -91,21 +85,11 @@ class MarketState(DataFrame):
         return "\n".join(self._log)
 
     @log.setter
-    def log(self, log:str):
+    def log(self, log: str):
         self._log.append(log)
 
     @classmethod
-    def fetchMarketCap(cls, date:str) -> DataFrame:
-        try:
-            df = get_market_cap_by_ticker(date=date, market='ALL', alternative=True) \
-                 .rename(columns=CAP_LABEL)
-            df.index.name = 'ticker'
-            return df
-        except (KeyError, RecursionError, JSONDecodeError, SSLError):
-            return DataFrame(columns=list(CAP_LABEL.values()))
-
-    @classmethod
-    def fetchKonexList(cls, date:str) -> Index:
+    def fetchKonexList(cls, date: str) -> Index:
         try:
             return get_market_cap_by_ticker(date=date, market='KONEX').index
         except (KeyError, RecursionError, JSONDecodeError, SSLError):
@@ -117,35 +101,45 @@ class MarketState(DataFrame):
         try:
             resp = StringIO(get(_url).text)
             df = read_html(io=resp, encoding='euc-kr')[0][IPO_LABEL.keys()] \
-                 .rename(columns=IPO_LABEL) \
-                 .set_index(keys='ticker')
+                .rename(columns=IPO_LABEL) \
+                .set_index(keys='ticker')
             df.index = df.index.astype(str).str.zfill(6)
             return df
         except (KeyError, RecursionError, JSONDecodeError, SSLError):
             return DataFrame(columns=list(IPO_LABEL.values()))
 
     @classmethod
-    def fetchMultiples(cls, date:str) -> DataFrame:
+    def fetchMarketCap(cls, date: str, market: str = 'ALL') -> DataFrame:
         try:
-            df = get_market_fundamental(date=date, market="ALL") \
-                 .rename(columns=MUL_LABEL)
+            df = get_market_cap_by_ticker(date=date, market=market, alternative=True) \
+                .rename(columns=CAP_LABEL)
+            df.index.name = 'ticker'
+            return df
+        except (KeyError, RecursionError, JSONDecodeError, SSLError):
+            return DataFrame(columns=list(CAP_LABEL.values()))
+
+    @classmethod
+    def fetchMultiples(cls, date: str, market: str = 'ALL') -> DataFrame:
+        try:
+            df = get_market_fundamental(date=date, market=market) \
+                .rename(columns=MUL_LABEL)
             df.index.name = "ticker"
             return df[MUL_LABEL.values()]
         except (KeyError, RecursionError, JSONDecodeError, SSLError):
             return DataFrame(columns=list(MUL_LABEL.values()))
 
     @classmethod
-    def fetchForeignRate(cls, date:str) -> DataFrame:
+    def fetchForeignRate(cls, date: str, market: str = 'ALL') -> DataFrame:
         try:
-            df = get_exhaustion_rates_of_foreign_investment(date=date, market='ALL') \
-                 .rename(columns=PCT_LABEL)
+            df = get_exhaustion_rates_of_foreign_investment(date=date, market=market) \
+                .rename(columns=PCT_LABEL)
             df.index.name = 'ticker'
             return round(df[PCT_LABEL.values()].astype(float), 2)
         except (KeyError, RecursionError, JSONDecodeError, SSLError):
             return DataFrame(columns=list(PCT_LABEL.values()))
 
     @classmethod
-    def fetchReturns(cls, date:str, tickers:Iterable=None) -> DataFrame:
+    def fetchReturns(cls, date: str, tickers: Iterable = None) -> DataFrame:
         tdate = datetime.strptime(date, "%Y%m%d")
         intv = {key: tdate - timedelta(val) for key, val in INTERVALS.items()}
         objs = {
@@ -154,9 +148,10 @@ class MarketState(DataFrame):
         }
         base = concat(objs, axis=1)
         base = base[
+            (~base.index.isin(cls.fetchKonexList(date))) &
             (~base['D+0']['shares'].isna()) &
             (base['D+0']['marketCap'] >= base['D+0']['marketCap'].median())
-        ]
+            ]
 
         returns = concat({
             dt: base[dt]['close'] / base['D+0']['close'] - 1 for dt in objs
@@ -174,7 +169,7 @@ class MarketState(DataFrame):
 
 
 if __name__ == "__main__":
-    # marketState = MarketState(True)
+    marketState = MarketState(True)
     # print(marketState)
-    # print(marketState.log)
-    print(Index([]))
+    print(marketState.log)
+

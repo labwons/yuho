@@ -1,10 +1,6 @@
-try:
-    from ...common.path import PATH
-except ImportError:
-    from src.common.path import PATH
 from datetime import datetime
 from io import StringIO
-from numpy import nan, isnan
+from numpy import nan
 from pandas import (
     concat,
     DataFrame,
@@ -19,6 +15,12 @@ from requests.exceptions import JSONDecodeError, SSLError
 from time import time
 from typing import Dict, List, Union, Tuple
 from xml.etree.ElementTree import Element, fromstring
+if "PATH" not in globals():
+    try:
+        from ...common.path import PATH
+    except ImportError:
+        from src.common.path import PATH
+
 
 CAP_LABEL: Dict[str, str] = {
     '종가': 'close', '시가총액': 'marketCap',
@@ -66,6 +68,8 @@ class MarketSpec(DataFrame):
 
         objs = []
         for n, ticker in enumerate(base.index):
+            if n == 10:
+                break
             try:
                 xml = self.fetchXml(ticker)
                 obj = self.fetchOverview(xml)
@@ -76,13 +80,8 @@ class MarketSpec(DataFrame):
                     continue
 
                 Aa, Qq = self.customizeStatement(A), self.customizeStatement(Q)
-                trailingRevenue = Qq[Qq.columns[0]].sum()
-                trailingEps = Qq['EPS(원)'].sum()
-                if len(Q) < 4:
-                    trailingRevenue = self._interpolate_sum(Qq[Qq.columns[0]])
-                    trailingEps = self._interpolate_sum(Qq['EPS(원)'])
-                obj['trailingRevenue'] = trailingRevenue
-                obj['trailingEps'] = trailingEps
+                obj['trailingRevenue'] = Qq.iloc[-1]['trailingRevenue']
+                obj['trailingEps'] = Qq.iloc[-1]['trailingEps']
                 obj['averageRevenueGrowth_A'] = Aa['revenueGrowth'].mean()
                 obj['averageProfitGrowth_A'] = Aa['profitGrowth'].mean()
                 obj['averageEpsGrowth_A'] = Aa['epsGrowth'].mean()
@@ -92,17 +91,21 @@ class MarketSpec(DataFrame):
                 obj['ProfitGrowth_Q'] = Qq.iloc[-1]['profitGrowth']
                 obj['EpsGrowth_A'] = Aa.iloc[-1]['epsGrowth']
                 obj['EpsGrowth_Q'] = Qq.iloc[-1]['epsGrowth']
-                obj['fiscalDividends'] = Aa.iloc[-1]['배당수익률(%)']
-                obj['fiscalDebtRatio'] = Aa.iloc[-1]['부채비율(%)']
+
+                dividend = Aa['배당수익률(%)'].dropna()
+                obj['fiscalDividends'] = dividend.values[-1] if not dividend.empty else nan
+
+                debt = Aa['부채비율(%)'].dropna()
+                obj['fiscalDebtRatio'] = debt.values[-1] if not debt.empty else nan
                 objs.append(obj)
-            except Exception as e:
-                self.log = f'... Failed to fetch: {ticker}'
+            except Exception as reason:
+                self.log = f'... Failed to fetch: {ticker} / {reason}'
 
         super().__init__(concat(objs, axis=1).T)
         for col in self:
             self[col] = round(self[col], 4 if col == 'beta' else 2)
 
-        self.log = f'End [Market Spec Fetch] / Elapsed: {time() - stime:.2f}s'
+        self.log = f'End [Market Spec Fetch] {len(self)} Stocks / Elapsed: {time() - stime:.2f}s'
         return
 
     @property
@@ -169,7 +172,11 @@ class MarketSpec(DataFrame):
         return Series(data=data).apply(cls._format)
 
     @classmethod
-    def fetchStatement(cls, ticker_or_xml: Union[str, Element], include_estimated: bool = True) -> Tuple[
+    def fetchStatement(
+            cls,
+            ticker_or_xml: Union[str, Element],
+            include_estimated: bool = True
+        ) -> Tuple[
         DataFrame, DataFrame]:
         xml = cls.fetchXml(ticker_or_xml) if isinstance(ticker_or_xml, str) else ticker_or_xml
 
@@ -183,25 +190,28 @@ class MarketSpec(DataFrame):
                 index.append(record.find('date').text)
                 data.append([val.text for val in record.findall('value')])
             df = DataFrame(index=index, columns=columns, data=data)
-            if not include_estimated:
-                df = df[(~df.index.str.endswith('(E)')) & (~df.index.str.endswith('(P)'))]
+            if df.index.str.endswith('(P)').any():
+                df.index = df.index.str.replace(r'\(P\)', '', regex=True)
             return df.map(cls._format)
 
-        annual = _statement(STATEMENT_TAG['consolidateAnnual'])
-        quarter = _statement(STATEMENT_TAG['consolidateQuarter'])
-        if annual.empty or quarter.empty:
-            return DataFrame(), DataFrame()
-        if isnan(quarter.iloc[-1]['부채비율(%)']):
-            annual = _statement(STATEMENT_TAG['separateAnnual'])
-            quarter = _statement(STATEMENT_TAG['separateQuarter'])
-        return annual, quarter
+        B_A = _statement(STATEMENT_TAG['separateAnnual'])
+        D_A = _statement(STATEMENT_TAG['consolidateAnnual'])
+        if B_A.count().sum() > D_A.count().sum():
+            A = B_A
+            Q = _statement(STATEMENT_TAG['separateQuarter'])
+        else:
+            A = D_A
+            Q = _statement(STATEMENT_TAG['consolidateQuarter'])
+        if not include_estimated:
+            A = A[~A.index.str.endswith('(E)')]
+            Q = Q[~Q.index.str.endswith('(E)')]
+        return A, Q
 
     @classmethod
     def customizeStatement(cls, statement: DataFrame) -> DataFrame:
         st = statement.copy()
-        if len(statement) < 4:
-            st[['revenueGrowth', 'profitGrowth', 'epsGrowth']] = [nan, nan, nan]
-            return st
+        st['trailingRevenue'] = st[st.columns[0]].rolling(window=4, min_periods=1).sum()
+        st['trailingEps'] = st['EPS(원)'].rolling(window=4, min_periods=1).sum()
         st['revenueGrowth'] = 100 * st[st.columns[0]].pct_change(fill_method=None)
         st['profitGrowth'] = 100 * st['영업이익(억원)'].pct_change(fill_method=None)
         st['epsGrowth'] = 100 * st['EPS(원)'].pct_change(fill_method=None)
