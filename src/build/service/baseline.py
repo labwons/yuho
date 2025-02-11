@@ -245,10 +245,12 @@ METADATA = {
 class MarketBaseline(DataFrame):
 
     def __init__(self, update:bool=True):
-        merge = MarketState(update=update) \
-                .join(MarketSpec(update=False), how='left') \
-                .join(MarketGroup(update=False), how='left')
+        spec = MarketSpec(update=False)
+        group = MarketGroup(update=False)
+        merge = MarketState(update=update).join(spec).join(group)
 
+        print(merge[spec.columns].count())
+        # merge = merge[merge[spec.columns].count().sum() > 0]
         merge['high52'] = merge[['close', 'high52']].max(axis=1)
         merge['low52'] = merge[['close', 'low52']].min(axis=1)
         merge['pct52wHigh'] = 100 * (merge['close'] / merge['high52'] - 1)
@@ -278,5 +280,5 @@ if __name__ == "__main__":
 
     baseline = MarketBaseline(False)
     print(baseline)
-    print(baseline.columns)
-    print(baseline.loc[['005930', '005380']])
+    # print(baseline.columns)
+    # print(baseline.loc[['005930', '005380']])

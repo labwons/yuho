@@ -59,12 +59,12 @@ class MarketSpec(DataFrame):
         date = datetime.today().strftime("%Y%m%d")
         self.log = f'Begin [Market Spec Fetch] @{date}'
 
-        base = self.fetchMarketCap(date)
+        base = concat([self.fetchMarketCap(date, 'KOSPI'), self.fetchMarketCap(date, 'KOSDAQ')])
         base = base[
             (~base['shares'].isna()) &
             (base['marketCap'] >= base['marketCap'].median()) &
             (base.index.isin(self.fetchIpoList().index))
-            ]
+        ]
 
         objs = []
         for n, ticker in enumerate(base.index):
@@ -72,7 +72,7 @@ class MarketSpec(DataFrame):
                 xml = self.fetchXml(ticker)
                 obj = self.fetchOverview(xml)
                 obj.name = ticker
-                A, Q = self.fetchStatement(xml, False)
+                A, Q = self.fetchStatement(xml)
                 if A.empty or Q.empty:
                     objs.append(obj)
                     continue
@@ -91,7 +91,7 @@ class MarketSpec(DataFrame):
                 obj['EpsGrowth_Q'] = Qq.iloc[-1]['epsGrowth']
 
                 dividend = Aa['배당수익률(%)'].dropna()
-                obj['fiscalDividends'] = dividend.values[-1] if not dividend.empty else nan
+                obj['fiscalDividendYield'] = dividend.values[-1] if not dividend.empty else nan
 
                 debt = Aa['부채비율(%)'].dropna()
                 obj['fiscalDebtRatio'] = debt.values[-1] if not debt.empty else nan
@@ -115,10 +115,6 @@ class MarketSpec(DataFrame):
         self._log.append(log)
 
     @classmethod
-    def _interpolate_sum(cls, val: Series) -> Union[int, float]:
-        return val.mean() * len(val) if len(val.isna()) else val.sum()
-
-    @classmethod
     def _format(cls, num) -> Union[int, float]:
         if not num:
             return nan
@@ -131,9 +127,9 @@ class MarketSpec(DataFrame):
             return float(num) if "." in num else int(num)
 
     @classmethod
-    def fetchMarketCap(cls, date: str) -> DataFrame:
+    def fetchMarketCap(cls, date: str, market:str='ALL') -> DataFrame:
         try:
-            df = get_market_cap_by_ticker(date=date, market='ALL', alternative=True) \
+            df = get_market_cap_by_ticker(date=date, market=market, alternative=True) \
                 .rename(columns=CAP_LABEL)
             df.index.name = 'ticker'
             return df
@@ -170,12 +166,7 @@ class MarketSpec(DataFrame):
         return Series(data=data).apply(cls._format)
 
     @classmethod
-    def fetchStatement(
-            cls,
-            ticker_or_xml: Union[str, Element],
-            include_estimated: bool = True
-        ) -> Tuple[
-        DataFrame, DataFrame]:
+    def fetchStatement(cls, ticker_or_xml: Union[str, Element]) -> Tuple[DataFrame, DataFrame]:
         xml = cls.fetchXml(ticker_or_xml) if isinstance(ticker_or_xml, str) else ticker_or_xml
 
         def _statement(tag: str) -> DataFrame:
@@ -188,28 +179,29 @@ class MarketSpec(DataFrame):
                 index.append(record.find('date').text)
                 data.append([val.text for val in record.findall('value')])
             df = DataFrame(index=index, columns=columns, data=data)
-            # if not include_estimated:
-            #     df = df[~df.index.str.endswith('(E)')]
-            if df.index.str.endswith('(P)').any():
-                df.index = df.index.str.replace(r'\(P\)', '', regex=True)
             return df.map(cls._format)
 
         B_A = _statement(STATEMENT_TAG['separateAnnual'])
         D_A = _statement(STATEMENT_TAG['consolidateAnnual'])
+        if B_A.empty or D_A.empty:
+            return DataFrame(), DataFrame()
         if B_A.count().sum() > D_A.count().sum():
             A = B_A
             Q = _statement(STATEMENT_TAG['separateQuarter'])
         else:
             A = D_A
             Q = _statement(STATEMENT_TAG['consolidateQuarter'])
-        if not include_estimated:
-            A = A[~A.index.str.endswith('(E)')]
-            Q = Q[~Q.index.str.endswith('(E)')]
         return A, Q
 
     @classmethod
-    def customizeStatement(cls, statement: DataFrame) -> DataFrame:
+    def customizeStatement(cls, statement: DataFrame, include_estimated: bool = False) -> DataFrame:
         st = statement.copy()
+        if not include_estimated:
+            st = st[~st.index.str.endswith('(E)')].copy()
+        if st[st.index.str.endswith('(P)')].count().sum() == 0:
+            st = st[~st.index.str.endswith('(P)')].copy()
+        else:
+            st.index = st.index.str.replace(r'\(P\)', '', regex=True)
         st['trailingRevenue'] = st[st.columns[0]].rolling(window=4, min_periods=1).sum()
         st['trailingEps'] = st['EPS(원)'].rolling(window=4, min_periods=1).sum()
         st['revenueGrowth'] = 100 * st[st.columns[0]].pct_change(fill_method=None)

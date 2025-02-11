@@ -151,7 +151,7 @@ class MarketState(DataFrame):
             (~base.index.isin(cls.fetchKonexList(date))) &
             (~base['D+0']['shares'].isna()) &
             (base['D+0']['marketCap'] >= base['D+0']['marketCap'].median())
-            ]
+        ]
 
         returns = concat({
             dt: base[dt]['close'] / base['D+0']['close'] - 1 for dt in objs
