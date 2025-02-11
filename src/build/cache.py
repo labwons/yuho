@@ -20,25 +20,25 @@ if __name__ == "__main__":
     from datetime import datetime
     TODAY = datetime.today().strftime("%Y-%m-%d")[2:]
 
-
-    group = MarketGroup(update=True)
-    if not PATH.GROUP.startswith('http'):
-        with open(PATH.GROUP, 'w') as f:
-            f.write(group.to_json(orient='index').replace("nan", ""))
-
-    spec = MarketSpec(update=True)
-    if not PATH.SPEC.startswith('http'):
-        with open(PATH.SPEC, 'w') as f:
-            f.write(spec.to_json(orient='index').replace("nan", ""))
-
-    index = MarketIndex(update=True)
-    if not PATH.INDEX.startswith('http'):
-        with open(PATH.INDEX, 'w') as f:
-            f.write(index.to_json(orient='index').replace("nan", ""))
+    mail = eMail()
+    mail.subject = f'UPDATE BASELINE CACHE on {TODAY}'
 
     try:
-        mail = eMail()
-        mail.subject = f'UPDATE BASELINE CACHE on {TODAY}'
+        group = MarketGroup(update=True)
+        if not PATH.GROUP.startswith('http'):
+            with open(PATH.GROUP, 'w') as f:
+                f.write(group.to_json(orient='index').replace("nan", ""))
+
+        spec = MarketSpec(update=True)
+        if not PATH.SPEC.startswith('http'):
+            with open(PATH.SPEC, 'w') as f:
+                f.write(spec.to_json(orient='index').replace("nan", ""))
+
+        index = MarketIndex(update=True)
+        if not PATH.INDEX.startswith('http'):
+            with open(PATH.INDEX, 'w') as f:
+                f.write(index.to_json(orient='index').replace("nan", ""))
+
         mail.context = f"""
 OVERVIEW: 
 - FAIL COUNT: 
@@ -56,6 +56,8 @@ DETAILS:
 - STOCK SPEC:
 {spec.log}
 """
+
+    except Exception as report:
+        mail.context = f"{report}"
+    finally:
         mail.send()
-    except Exception:
-        pass

@@ -68,8 +68,6 @@ class MarketSpec(DataFrame):
 
         objs = []
         for n, ticker in enumerate(base.index):
-            if n == 10:
-                break
             try:
                 xml = self.fetchXml(ticker)
                 obj = self.fetchOverview(xml)
@@ -190,6 +188,8 @@ class MarketSpec(DataFrame):
                 index.append(record.find('date').text)
                 data.append([val.text for val in record.findall('value')])
             df = DataFrame(index=index, columns=columns, data=data)
+            # if not include_estimated:
+            #     df = df[~df.index.str.endswith('(E)')]
             if df.index.str.endswith('(P)').any():
                 df.index = df.index.str.replace(r'\(P\)', '', regex=True)
             return df.map(cls._format)
