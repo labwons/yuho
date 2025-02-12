@@ -69,8 +69,14 @@ class MarketState(DataFrame):
         self.log = f'... Fetch KOSDAQ Market State :: {"Fail" if kq.empty else "Success"}'
         market = concat([ks, kq], axis=0)
 
-        returns = self.fetchReturns(date)
-        returns = returns[returns.index.isin(self.fetchIpoList().index)]
+        market = market[
+            (~market.index.isin(self.fetchKonexList(date))) &
+            (market.index.isin(self.fetchIpoList().index)) &
+            (~market['shares'].isna())
+            ]
+        market = market[market['marketCap'] >= market['marketCap'].median()]
+
+        returns = self.fetchReturns(date, market.index)
         self.log = f'... Fetch Returns :: {"Fail" if returns.empty else "Success"}'
 
         merge = returns.join(market, how='left')
@@ -147,11 +153,7 @@ class MarketState(DataFrame):
             for key, val in intv.items()
         }
         base = concat(objs, axis=1)
-        base = base[
-            (~base.index.isin(cls.fetchKonexList(date))) &
-            (~base['D+0']['shares'].isna()) &
-            (base['D+0']['marketCap'] >= base['D+0']['marketCap'].median())
-        ]
+        base = base[base.index.isin(tickers)]
 
         returns = concat({
             dt: base[dt]['close'] / base['D+0']['close'] - 1 for dt in objs

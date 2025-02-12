@@ -203,6 +203,12 @@ METADATA = {
         'unit': '',
 		'round': 2,
     },
+    'market': {
+        'label': '시장구분',
+        'description': '시장 구분',
+        'unit': '',
+        'round': -1
+    },
     'name': {
         'label': '종목명',
         'description': '종목명',
@@ -249,7 +255,7 @@ class MarketBaseline(DataFrame):
         group = MarketGroup(update=False)
         merge = MarketState(update=update).join(spec).join(group)
 
-        print(merge[spec.columns].count())
+        # print(merge[spec.columns].count())
         # merge = merge[merge[spec.columns].count().sum() > 0]
         merge['high52'] = merge[['close', 'high52']].max(axis=1)
         merge['low52'] = merge[['close', 'low52']].min(axis=1)
