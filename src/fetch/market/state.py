@@ -171,7 +171,7 @@ class MarketState(DataFrame):
 
 
 if __name__ == "__main__":
-    marketState = MarketState(True)
+    marketState = MarketState(False)
     # print(marketState)
     print(marketState.log)
 

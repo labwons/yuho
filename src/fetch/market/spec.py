@@ -59,15 +59,15 @@ class MarketSpec(DataFrame):
         date = datetime.today().strftime("%Y%m%d")
         self.log = f'Begin [Market Spec Fetch] @{date}'
 
-        base = concat([self.fetchMarketCap(date, 'KOSPI'), self.fetchMarketCap(date, 'KOSDAQ')])
-        base = base[
-            (~base['shares'].isna()) &
-            (base['marketCap'] >= base['marketCap'].median()) &
-            (base.index.isin(self.fetchIpoList().index))
+        market = concat([self.fetchMarketCap(date, 'KOSPI'), self.fetchMarketCap(date, 'KOSDAQ')])
+        market = market[
+            (market.index.isin(self.fetchIpoList().index)) &
+            (~market['shares'].isna())
         ]
+        market = market[market['marketCap'] >= market['marketCap'].median()]
 
         objs = []
-        for n, ticker in enumerate(base.index):
+        for n, ticker in enumerate(market.index):
             try:
                 xml = self.fetchXml(ticker)
                 obj = self.fetchOverview(xml)
@@ -80,6 +80,7 @@ class MarketSpec(DataFrame):
                 Aa, Qq = self.customizeStatement(A), self.customizeStatement(Q)
                 obj['trailingRevenue'] = Qq.iloc[-1]['trailingRevenue']
                 obj['trailingEps'] = Qq.iloc[-1]['trailingEps']
+                obj['trailingProfitRate'] = Qq.iloc[-1]['trailingProfitRate']
                 obj['averageRevenueGrowth_A'] = Aa['revenueGrowth'].mean()
                 obj['averageProfitGrowth_A'] = Aa['profitGrowth'].mean()
                 obj['averageEpsGrowth_A'] = Aa['epsGrowth'].mean()
@@ -203,7 +204,9 @@ class MarketSpec(DataFrame):
         else:
             st.index = st.index.str.replace(r'\(P\)', '', regex=True)
         st['trailingRevenue'] = st[st.columns[0]].rolling(window=4, min_periods=1).sum()
+        st['trailingProfit'] = st['영업이익(억원)'].rolling(window=4, min_periods=1).sum()
         st['trailingEps'] = st['EPS(원)'].rolling(window=4, min_periods=1).sum()
+        st['trailingProfitRate'] = st['trailingProfit'] / st['trailingRevenue'] * 100
         st['revenueGrowth'] = 100 * st[st.columns[0]].pct_change(fill_method=None)
         st['profitGrowth'] = 100 * st['영업이익(억원)'].pct_change(fill_method=None)
         st['epsGrowth'] = 100 * st['EPS(원)'].pct_change(fill_method=None)

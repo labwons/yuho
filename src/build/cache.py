@@ -18,10 +18,10 @@ if __name__ == "__main__":
         from src.fetch.market.index import MarketIndex
         from src.fetch.market.spec import MarketSpec
     from datetime import datetime
+
     TODAY = datetime.today().strftime("%Y-%m-%d")[2:]
 
     mail = eMail()
-    mail.subject = f'UPDATE BASELINE CACHE on {TODAY}'
 
     try:
         group = MarketGroup(update=True)
@@ -39,25 +39,24 @@ if __name__ == "__main__":
             with open(PATH.INDEX, 'w') as f:
                 f.write(index.to_json(orient='index').replace("nan", ""))
 
-        mail.context = f"""
-OVERVIEW: 
-- FAIL COUNT: 
-  1) MARKET GROUP: {group.log.count("Fail")}
-  2) MARKET INDEX: {index.log.count("Fail")}
-  3) STOCK SPEC: {spec.log.count("Fail")}
+        counts = group.log.count("Fail") + group.log.count("Fail") + group.log.count("Fail")
+        prefix = "SUCCESS" if not counts else "WARNING"
 
-DETAILS:
-- MARKET GROUP:
-{group.log}
-
-- MARKET INDEX:
-{index.log}
-
-- STOCK SPEC:
-{spec.log}
-"""
+        mail.subject = f'[{prefix}] UPDATE BASELINE CACHE on {TODAY}'
+        mail.context = "\n".join([
+            "DETAILS:",
+            "- MARKET GROUP:",
+            group.log,
+            "",
+            "- MARKET INDEX:",
+            index.log,
+            "",
+            "STOCK SPEC:",
+            spec.log
+        ])
 
     except Exception as report:
+        mail.subject = f'[FAILED] UPDATE BASELINE CACHE on {TODAY}'
         mail.context = f"{report}"
     finally:
         mail.send()

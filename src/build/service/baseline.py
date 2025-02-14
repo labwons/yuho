@@ -6,8 +6,16 @@ except ImportError:
     from src.fetch.market.state import MarketState
     from src.fetch.market.group import MarketGroup
     from src.fetch.market.spec import MarketSpec
+from datetime import datetime
 from numpy import nan
 from pandas import DataFrame
+from time import time
+from typing import Any, Dict, List
+if "PATH" not in globals():
+    try:
+        from ...common.path import PATH
+    except ImportError:
+        from src.common.path import PATH
 
 
 METADATA = {
@@ -28,6 +36,18 @@ METADATA = {
         'description': '거래량',
         'unit': '',
 		'round': 0,
+    },
+    'amount': {
+        'label': '거래대금',
+        'description': '거래대금',
+        'unit': '원',
+        'round': 0
+    },
+    'PBR': {
+        'label': 'PBR',
+        'description': '주가 장부가(분기)',
+        'unit': '',
+        'round': 2
     },
     'dividendYield': {
         'label': '예상 배당수익률',
@@ -99,6 +119,12 @@ METADATA = {
         'label': 'EPS',
         'description': '연속 4분기에 대한 EPS 합산',
         'unit': '원',
+		'round': 2,
+    },
+    'trailingProfitRate': {
+        'label': '영업이익률',
+        'description': '연속 4분기 영업이익/매출에 대한 영업이익률',
+        'unit': '%',
 		'round': 2,
     },
     'averageRevenueGrowth_A': {
@@ -203,6 +229,12 @@ METADATA = {
         'unit': '',
 		'round': 2,
     },
+    'turnoverRatio': {
+        'label': "거래회전율",
+        'description': '시가총액 대비 거래대금 비율',
+        'unit': '%',
+        'round': 2,
+    },
     'market': {
         'label': '시장구분',
         'description': '시장 구분',
@@ -248,35 +280,56 @@ METADATA = {
 }
 
 
+
 class MarketBaseline(DataFrame):
 
+    _log: List[str] = []
+    meta: Dict[str, Dict[str, Any]] = METADATA.copy()
     def __init__(self, update:bool=True):
+        stime = time()
+        self.log = f'Begin [Build Market Baseline] @{datetime.today().strftime("%Y-%m-%d")[2:]}'
+
         spec = MarketSpec(update=False)
         group = MarketGroup(update=False)
-        merge = MarketState(update=update).join(spec).join(group)
+        state = MarketState(update=update)
+        merge = state.join(spec).join(group)
+        if state.log:
+            self.log = state.log
 
-        # print(merge[spec.columns].count())
-        # merge = merge[merge[spec.columns].count().sum() > 0]
-        merge['high52'] = merge[['close', 'high52']].max(axis=1)
-        merge['low52'] = merge[['close', 'low52']].min(axis=1)
-        merge['pct52wHigh'] = 100 * (merge['close'] / merge['high52'] - 1)
-        merge['pct52wLow'] = 100 * (merge['close'] / merge['low52'] - 1)
-        merge['pctEstimated'] = 100 * (merge['close'] / merge['estPrice'] - 1)
-        merge['estimatedPE'] = merge['close'] / merge['estEps']
-        merge.drop(columns=["high52", "low52", "estPrice", "estEps"], inplace=True)
+        try:
+            merge['high52'] = merge[['close', 'high52']].max(axis=1)
+            merge['low52'] = merge[['close', 'low52']].min(axis=1)
+            merge['pct52wHigh'] = 100 * (merge['close'] / merge['high52'] - 1)
+            merge['pct52wLow'] = 100 * (merge['close'] / merge['low52'] - 1)
+            merge['pctEstimated'] = 100 * (merge['close'] / merge['estPrice'] - 1)
+            merge['estEps'] = merge['estEps'].apply(lambda x: x if x > 0 else nan)
+            merge['estimatedPE'] = merge['close'] / merge['estEps']
+            merge.drop(columns=["high52", "low52", "estPrice", "estEps"], inplace=True)
 
-        merge['trailingPS'] = (merge['marketCap'] / 1e+8) / merge['trailingRevenue']
-        merge['trailingPE'] = merge['close'] / merge['trailingEps']
-        merge['trailingPE'] = merge['trailingPE'].apply(lambda val: val if val > 0 else nan)
-        merge['turnoverRatio'] = 100 * merge['amount'] / merge['marketCap']
+            merge['trailingEps'] = merge['trailingEps'].apply(lambda x: x if x > 0 else nan)
+            merge['trailingPS'] = (merge['marketCap'] / 1e+8) / merge['trailingRevenue']
+            merge['trailingPE'] = merge['close'] / merge['trailingEps']
+            merge['turnoverRatio'] = 100 * merge['amount'] / merge['marketCap']
+            self.log = f'- No-Labeled Keys: {[key for key in merge if key not in METADATA]}'
 
-        merge = merge[METADATA.keys()]
-        for key, meta in METADATA.items():
-            if not meta['round'] == -1:
-                merge[key] = round(merge[key], meta['round'])
+            merge = merge[METADATA.keys()]
+            for key, meta in METADATA.items():
+                if not meta['round'] == -1:
+                    merge[key] = round(merge[key], meta['round'])
+        except Exception as report:
+            self.log = f" * Error while customizing data: {report}"
 
         super().__init__(merge)
+        self.log = f'End [Build Market Baseline] {len(self)} Stocks / Elapsed: {time() - stime:.2f}s'
         return
+
+    @property
+    def log(self) -> str:
+        return "\n".join(self._log)
+
+    @log.setter
+    def log(self, log: str):
+        self._log.append(log)
 
 
 if __name__ == "__main__":
@@ -286,5 +339,6 @@ if __name__ == "__main__":
 
     baseline = MarketBaseline(False)
     print(baseline)
+    print(baseline.log)
     # print(baseline.columns)
     # print(baseline.loc[['005930', '005380']])
