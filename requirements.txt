@@ -1,4 +1,6 @@
 bs4
+csscompressor
+jinja2
 jsmin
 numpy
 pandas

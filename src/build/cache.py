@@ -39,7 +39,7 @@ if __name__ == "__main__":
             with open(PATH.INDEX, 'w') as f:
                 f.write(index.to_json(orient='index').replace("nan", ""))
 
-        counts = group.log.count("Fail") + group.log.count("Fail") + group.log.count("Fail")
+        counts = group.log.count("Fail") + spec.log.count("Fail") + index.log.count("Fail")
         prefix = "SUCCESS" if not counts else "WARNING"
 
         mail.subject = f'[{prefix}] UPDATE BASELINE CACHE on {TODAY}'

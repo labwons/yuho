@@ -141,7 +141,7 @@ _KEYS = {
     },
     'beta': {
         'na': '(미제공)',
-        'valueScale': None,
+        'valueScale': [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75],
         'colorScale': RED2GREEN,
         'defaultColorIndex': 3,
     },
@@ -189,6 +189,7 @@ _KEYS = {
     }
 }
 
+
 class MarketMap(DataFrame):
 
     _log: List[str] = []
@@ -206,32 +207,35 @@ class MarketMap(DataFrame):
                      + '종가: ' + self['close'].apply(lambda x: f"{x:,d}원")
 
         ws_industry = self._grouping("industryName")
+        ws_industry.index = ws_industry.index.str.pad(width=6, side="left", fillchar='W')
         ws_sector = self._grouping("sectorName")
         ws_sector["ceiling"] = "대형주"
+        ws_sector.index = ws_sector.index.str.pad(width=6, side="left", fillchar='W')
         ws_top = DataFrame(self.select_dtypes(include=['int']).sum()).T
         ws_top[['name', 'meta']] = ['대형주', self._format_cap(ws_top.iloc[0]['size'])]
         ws_top.index = ['WS0000']
 
         ns_industry = self._grouping("industryName", "005930")
+        ns_industry.index = ns_industry.index.str.pad(width=6, side="left", fillchar='N')
         ns_sector = self._grouping("sectorName", "005930")
         ns_sector["ceiling"] = "대형주(삼성전자 제외)"
+        ns_sector.index = ns_sector.index.str.pad(width=6, side="left", fillchar='N')
         ns_top = DataFrame(self[~self.index.isin(['005930'])].select_dtypes(include=['int']).sum()).T
         ns_top[['name', 'meta']] = ["대형주(삼성전자 제외)", self._format_cap(ns_top.iloc[0]['size'])]
         ns_top.index = ['NS0000']
 
         super().__init__(concat([self, ws_industry, ns_industry, ws_sector, ns_sector, ws_top, ns_top]))
         self.drop(inplace=True, columns=[
-            "close", "marketCap", "amount", "market", 'floatShares',
+            "close", 'floatShares',
             'trailingRevenue', 'trailingEps', 'pctEstimated',
             'RevenueGrowth_Q', 'ProfitGrowth_Q', 'EpsGrowth_Q',
             "industryCode", "industryName", "sectorCode", "sectorName", "stockSize"
         ])
 
         self._check_metadata(baseline.meta)
+        self._chunk()
         self._round_up()
 
-
-        # self._update_value_scale()
         self.log = f'End [Build Market Map] {len(self)} Items / Elapsed: {time() - stime:.2f}s'
         return
 
@@ -240,20 +244,41 @@ class MarketMap(DataFrame):
             if not key in self:
                 raise KeyError(f'MAP metadata: {key} is not in MAP data')
         for col in self.select_dtypes(include=['number']).columns:
-            if col == 'size': continue
+            if col in ['size', 'amount', 'marketCap']: continue
             if not col in baseline_meta:
                 raise ValueError(f'MAP data key : "{col}" is not found in Baseline metadata')
             if not col in self.meta:
-                print(col)
-                # TODO
-                # raise Error로 바꾸기: meta에 새로 key 할당하는 구문은 삭제
-                self.meta[col] = baseline_meta[col]
-            else:
-                self.meta[col].update(baseline_meta[col])
+                raise KeyError(f'column: {col} is not predefined in MAP metadata')
+            self.meta[col].update(baseline_meta[col])
+        return
 
-        # def _update_value_scale(self):
-        #     missing = [col for col in self.select_dtypes(include=['number']).columns if not col in _KEYS]
-        #     self.log = f'- Missing Predefined keys are auto-generated:\n    {missing}'
+    def _chunk(self):
+        for key, meta in self.meta.items():
+            if meta['valueScale']:
+                continue
+
+            mean, std, mn, mx = self[key].mean(), self[key].std(), self[key].min(), self[key].max()
+            if key in ['volume', 'PBR']:
+                self.meta[key]['valueScale'] = [None, None, None, 0, mean / 2, mean, mean + std]
+            elif key in ['estimatedPE', 'trailingPE', 'trailingPS']:
+                dv = (min(mx, mean + 2 * std) - mean) / 4
+                self.meta[key]['valueScale'] = [0.25 * mean, 0.5 * mean, 0.75 * mean, mean, dv, 2 * dv, 3 * dv]
+            elif key == 'turnoverRatio':
+                ks, kq = self[self['market'] == 'kospi'], self[self['market'] == 'kosdaq']
+                ks = 100 * ks['amount'].sum() / ks['marketCap'].sum()
+                kq = 100 * kq['amount'].sum() / kq['marketCap'].sum()
+                dvn = mean - ks
+                dvp = kq - mean
+                self.meta[key]['valueScale'] = [ks, ks + 0.33 * dvn, ks + 0.66 * dvn, mean, mean + 0.33 * dvp, mean + 0.66 * dvp, kq]
+                self.drop(inplace=True, columns=['amount', 'market', 'marketCap'])
+            else:
+                en, ep = max(mn, mean - 2 * std), min(mx, mean + 2 * std)
+                dvn, dvp = mean - en, ep - mean
+                self.meta[key]['valueScale'] = [
+                    en + 0.25*dvn, en + 0.5*dvn, en + 0.75*dvn, mean,
+                    mean + 0.25*dvp, mean + 0.5*dvp, mean + 0.75*dvp
+                ]
+            self.meta[key]['valueScale'] = [round(v, 2) for v in self.meta[key]['valueScale'] if v]
         return
 
     def _grouping(self, key:str, *exclude:str) -> DataFrame:
@@ -269,7 +294,7 @@ class MarketMap(DataFrame):
             w = group['size'] / size
             obj = {col: (w * group[col]).sum() for col in group if group[col].dtype == float}
             obj.update({
-                "ticker": group.iloc[0][key.replace("Name", "Code")].zfill(6),
+                "ticker": group.iloc[0][key.replace("Name", "Code")],
                 "name": value,
                 "size": size,
                 "volume": group['volume'].sum(),
@@ -316,10 +341,35 @@ class MarketMap(DataFrame):
                 meta=subset.meta,
                 hovertemplate="%{meta}: %{x}<extra></extra>"
             ))
+            fig.add_trace(go.Scatter(
+                x=[subset.x.mean() - 2 * subset.x.std()] * len(subset),
+                y=subset.y,
+                mode='lines',
+                showlegend=False,
+                line={
+                    'color':'black',
+                    'dash':'dot'
+                },
+                visible=(n == 0),
+                hoverinfo='skip'
+            ))
+            fig.add_trace(go.Scatter(
+                x=[subset.x.mean() + 2 * subset.x.std()] * len(subset),
+                y=subset.y,
+                mode='lines',
+                showlegend=False,
+                line={
+                    'color': 'black',
+                    'dash': 'dot'
+                },
+                visible=(n == 0),
+                hoverinfo='skip'
+            ))
+
             visibility.append({
                 "label": col,
                 "method": "update",
-                "args": [{"visible": [j == n for j in range(len(self.desc.columns))]}]
+                "args": [{"visible": [(j // 3) == n for j in range(3 * len(self.desc.columns))]}]
             })
 
         fig.update_layout(
@@ -337,6 +387,37 @@ class MarketMap(DataFrame):
         )
         fig.show()
         return
+
+    @property
+    def colors(self) -> DataFrame:
+        objs = {}
+        for key, meta in self.meta.items():
+            scale = [v if v else 0 for v in meta['valueScale']]
+            rgb = [HEX2RGB(s) for s in meta['colorScale']]
+            default = meta['colorScale'][meta['defaultColorIndex']]
+            def _paint(value) -> str:
+                if value == '':
+                    return default
+                value = float(value)
+                if value <= scale[0]:
+                    return meta['colorScale'][0]
+                if value > scale[-1]:
+                    return meta['colorScale'][-1]
+                n = 0
+                while n < len(meta['colorScale']) - 1:
+                    if scale[n] < value <= scale[n + 1]:
+                        break
+                    n += 1
+                r1, g1, b1 = rgb[n]
+                r2, g2, b2 = rgb[n + 1]
+                r = CONNECT(value, scale[n], r1, scale[n + 1], r2)
+                g = CONNECT(value, scale[n], g1, scale[n + 1], g2)
+                b = CONNECT(value, scale[n], b1, scale[n + 1], b2)
+                return f'#{hex(int(r))[2:]}{hex(int(g))[2:]}{hex(int(b))[2:]}'.upper()
+            objs[key] = self[key].fillna('').apply(_paint)
+        colors = concat(objs, axis=1)
+        colors.iloc[-2:] = "#C8C8C8"
+        return colors
 
     @property
     def desc(self) -> DataFrame:
@@ -386,8 +467,10 @@ if __name__ == "__main__":
     set_option('display.expand_frame_repr', False)
 
     marketMap = MarketMap(MarketBaseline(update=False))
-    # print(marketMap)
+    print(marketMap)
     print(marketMap.log)
     # print(marketMap.meta)
     # print(marketMap.gaussian)
-    marketMap.show_gaussian()
+    # marketMap.show_gaussian()
+    # print(marketMap.colors)
+    print(marketMap.to_dict(orient='index'))

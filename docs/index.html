@@ -2,172 +2,54 @@
 <html lang="ko">
 <head>
     <title>LAB￦ONS</title>
-
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="google-adsense-account" content="ca-pub-7507574593260609">
-
-    <link rel="icon" href="./src/img/favicon.ico" type="image/x-icon">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
-    <link rel="stylesheet" href="./src/css/style.css">
-<!--    <link rel="stylesheet" href="./src/css/market.min.css">-->
-
-    <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
-    <script src="https://cdn.plot.ly/plotly-2.34.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <link rel="stylesheet" href="./src/css/select2.min.css">
+    <link rel="stylesheet" href="./src/css/style.min.css">
+    <link rel="stylesheet" href="./src/css/marketmap.min.css">
+    <link rel="icon" href="./src/img/favicon.ico" type="image/x-icon">
+    
+    <script src="./src/js/jquery-3.6.1.min.js"></script>
+    <script src="./src/js/plotly-2.35.2-r0.1.min.js"></script>
+    <script src="./src/js/select2.min.js"></script>
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-KJFQ72Z8');</script>
 </head>
 <body>
-    <!----------------------------------------------------------------------------------------------->
-    <!------------------------------------------- HEADER -------------------------------------------->
-    <!----------------------------------------------------------------------------------------------->
     <header id="header" class="header header-fix">
-      <a href="/" class="logo">
-        <img src="./src/img/logo-text.png" alt="Logo">
-      </a>
-      <nav id="navbar" class="navbar">
-        <ul>
-          <li><a href="/">시장 지도</a></li>
-          <li><a href="/scatter">종목 분포</a></li>
-          <li><a href="/macro">경제 지표</a></li>
-        </ul>
-        <i class="fa fa-bars navbar-button"></i>
-      </nav>
+        <a href="/" class="logo"><img src="" alt="LAB￦ONS"></a>
+        <nav id="navbar" class="navbar">
+            <ul>
+            </ul>
+            <i class="fa fa-bars navbar-button"></i>
+        </nav>
     </header>
 
-    <!----------------------------------------------------------------------------------------------->
-    <!-------------------------------------------- MAIN --------------------------------------------->
-    <!----------------------------------------------------------------------------------------------->
     <main id="main">
-      <section class="service-section">
-        <h1 style="display:none;">시장 지도</h1>
-        <div class="ad-vertical">
-          <ins class="adsbygoogle"
-            style="display:block"
-            data-ad-client="ca-pub-7507574593260609"
-            data-ad-slot="9705057757"
-            data-ad-format="auto"
-            data-full-width-responsive="true">
-          </ins>
-        </div>
-        <div class="service-box">
-          <div class="service-nav">
-            <div class="map-options">
-              <select name="type" class="map-type"></select>
-              <select name="option" class="map-option"></select>
-              <div class="map-reset"><i class="fa fa-refresh"></i></div>
-              <div class="map-switch"><i class="fa fa-signal"></i></div>
+        <section class="service-section">
+            <div class="ad-section">
+                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7507574593260609" data-ad-slot="9705057757" data-ad-format="auto" data-full-width-responsive="true" ></ins>
             </div>
-            <select class="map-searchbar">
-              <option></option>
-            </select>
-          </div>
-
-          <div class="service-app">
-            <div class="map-plotly" id="market-map">
-              <i class="map-rewind fa fa-undo"></i>
+            <div class="service">
+                <div class="service-nav">
+                    <div class="service-opt-l"></div>
+                    <div class="service-opt-r"></div>
+                </div>
+                <div class="service-app">
+                    <div class="plot" id="plotly"><i class="map-rewind fa fa-undo"></i></div>
+                </div>
+                <div style="clear:both;"></div>
+                <div class="service-footer">
+					<div class="map-legend"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+					<div class="service-notice">모든 투자의 책임은 당사자에게 있습니다. *표시는 코스닥 종목입니다.코스피200, 코스닥150 편성 종목으로 구성되었습니다. PC 환경에서 마우스 커서를 올리거나 모바일 기기에서 길게 누르면 세부 정보가 나타납니다. 종목이나 섹터를 클릭(탭)하면 확대/재편됩니다. </div>
+				</div>
             </div>
-          </div>
-          <div style="clear:both;"></div>
-          <div class="service-footer">
-            <div class="map-legend">
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-            <div class="map-notice">
-              모든 투자의 책임은 당사자에게 있습니다. PC 환경에서 마우스 커서를 올리거나 모바일 기기에서 길게 누르면 세부 정보가 나타납니다. 종목이나 섹터를 클릭(탭)하면 확대/재편됩니다. *표시는 코스닥 종목입니다.
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      <section id="faq" class="faq">
-
-        <div class="faq-header">
-          <h2>자주 묻는 질문 F.A.Q</h2>
-        </div>
-
-        <div class="faq-container">
-          <div class="faq-column">
-            <div class="faq-item">
-              <div class="faq-question faq-question-1">
-                <span>자료 출처가 어디인가요?</span>
-                <i class="fa fa-chevron-down"></i>
-              </div>
-              <div class="faq-content faq-content-1 collapse">
-                섹터/업종 분류는 GICS 산업 분류 및 WISE INDEX를 참고하여 재구성하였습니다. 수익률과 PBR/PER/배당수익률은 한국거래소(KRX) 데이터를 참고하였으며 수익률은 종가를 기준으로 계산하였습니다.
-              </div>
-            </div>
-
-            <div class="faq-item">
-              <div class="faq-question faq-question-2">
-                <span>언제 업데이트 되나요?</span>
-                <i class="fa fa-chevron-down"></i>
-              </div>
-              <div class="faq-content faq-content-2 collapse">
-                개장일 기준, 정규장 시간 마감(15:30) 이후 15분~30분 내로 업데이트 됩니다. 휴장일에는 마지막 개장일 데이터가 유지됩니다.
-              </div>
-            </div>
-
-            <div class="faq-item">
-              <div class="faq-question faq-question-3">
-                <span>실시간 업데이트는 안 되나요?</span>
-                <i class="fa fa-chevron-down"></i>
-              </div>
-              <div class="faq-content faq-content-3 collapse">
-                안타깝게도 제공되지 않습니다.<i class="fa fa-frown-o"></i>
-              </div>
-            </div>
-          </div>
-
-          <div class="faq-column">
-            <div class="faq-item">
-              <div class="faq-question faq-question-4">
-                <span>제가 찾는 종목이 없어요.</span>
-                <i class="fa fa-chevron-down"></i>
-              </div>
-              <div class="faq-content faq-content-4 collapse">
-                  가독성을 위해 대형주는 코스피200 지수와 코스닥150 지수 종목으로 구성하였으며 중형주는 그 외 시가총액 상위 400개로 제한하였습니다. 이외 종목은 제외됩니다.
-              </div>
-            </div>
-
-            <div class="faq-item">
-              <div class="faq-question faq-question-5">
-                <span>PER, PBR 기준 일자가 언제예요?</span>
-                <i class="fa fa-chevron-down"></i>
-              </div>
-              <div class="faq-content faq-content-5 collapse">
-                한국거래소(KRX)에서 일괄 조회 가능한 최근 분기 실적 발표 기준입니다.
-              </div>
-            </div>
-
-            <div class="faq-item">
-              <div class="faq-question faq-question-6">
-                <span>정보 수정이 필요해요.</span>
-                <i class="fa fa-chevron-down"></i>
-              </div>
-              <div class="faq-content faq-content-6 collapse">
-                고장 신고, 정보 정정 및 기타 문의는 snob.labwons@gmail.com 으로 연락주세요!
-                <i class="fa fa-smile-o"></i>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-      </section>
-
+        </section>
     </main>
 
-    <!----------------------------------------------------------------------------------------------->
-    <!------------------------------------------- FOOTER -------------------------------------------->
-    <!----------------------------------------------------------------------------------------------->
     <footer id="footer" class="footer">
 
       <div class="footer-basis">
@@ -176,8 +58,7 @@
             <a href="/" class="logo">
               <img src="./src/img/logo-footer.png" alt="LAB￦ONS">
             </a>
-            <p>본 홈페이지는 <b>개인 블로그</b>이며 여기서 취득한 어떤 정보도 법적인 효력을 갖지 못합니다. 모든 투자의 책임은 당사자에게 있습니다.
-            참고한 정보의 출처는 신뢰할 만하나, 열람 시점이나 제공처의 사정 따라 정보의 정확성이 달라질 수 있습니다.</p>
+            <p>본 홈페이지는 <b>개인 블로그</b>이며 여기서 취득한 어떤 정보도 법적인 효력을 갖지 못합니다. 모든 투자의 책임은 당사자에게 있습니다. 참고한 정보의 출처는 신뢰할 만하나, 열람 시점이나 제공처의 사정 따라 정보의 정확성이 달라질 수 있습니다.</p>
           </div>
 
           <div class="footer-links">
@@ -195,18 +76,13 @@
             <div class="footer-link">
               <h4>서비스 바로가기</h4>
               <ul>
-                <li><i class="fa fa-chevron-right"></i> <a href="/">시장 지도</a></li>
-                <li><i class="fa fa-chevron-right"></i> <a href="/scatter">종목 분포</a></li>
-                <li><i class="fa fa-chevron-right"></i> <a href="/macro">경제 지표</a></li>
-              </ul>
+            </ul>
             </div>
           </div>
 
           <div class="footer-contact">
             <h4>연락처</h4>
-            <p>
-              <strong><i class="fa fa-envelope-o"></i></strong> snob.labwons@gmail.com
-            </p>
+            <p><strong><i class="fa fa-envelope-o"></i></strong> snob.labwons@gmail.com</p>
           </div>
 
         </div>
@@ -221,6 +97,6 @@
         </div>
       </div>
     </footer>
-
+    <script>document.addEventListener("selectstart", function(e) {e.preventDefault();});</script>
 </body>
 </html>
