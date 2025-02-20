@@ -15,7 +15,7 @@ def render(test_mode:bool=False):
     kwargs.ADSENSE = True
     kwargs['title'] = 'TESTING'
     kwargs['trading_date'] = '2025/02/20'
-    kwargs['link'] = {"rel": "stylesheet", "href": "./src/css/marketmap.min.css"}
+    kwargs['link'] = {"rel": "stylesheet", "href": "/src/css/marketmap.min.css"}
     kwargs['service_opt_l'] = '''
                         <select name="type" class="map-select map-type"></select>
                         <select name="option" class="map-select map-option"></select>
@@ -42,6 +42,7 @@ def render(test_mode:bool=False):
         {'q': 'Testing Question 6', 'a': 'Testing Answer 6'},
         {'q': 'Testing Question 7', 'a': 'Testing Answer 7'},
     ]
+    kwargs['bscript'] = {"src": "/src/js/marketmap.min.js"}
 
     if test_mode:
         del kwargs['logo_img']

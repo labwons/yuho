@@ -15,7 +15,7 @@ class minify:
                 if _file.endswith('css') and not _file.endswith('.min.css'):
                     with open(os.path.join(_dir, _file), 'r', encoding='utf-8') as file:
                         src = file.read()
-                    with open(os.path.join(_dir, _file.replace(".css", ".min.css")), "w") as file:
+                    with open(os.path.join(_dir, _file.replace(".css", ".min.css")), "w", encoding='utf-8') as file:
                         file.write(csscompressor.compress(src))
         return
 
@@ -26,7 +26,7 @@ class minify:
                 if _file.endswith('js') and not _file.endswith('.min.js'):
                     with open(os.path.join(_dir, _file), 'r', encoding='utf-8') as file:
                         src = file.read()
-                    with open(os.path.join(_dir, _file.replace(".js", ".min.js")), "w") as file:
+                    with open(os.path.join(_dir, _file.replace(".js", ".min.js")), "w", encoding='utf-8') as file:
                         file.write(jsmin.jsmin(src))
         return
 
@@ -36,30 +36,6 @@ class DefaultKwargs(Dict):
     ADSENSE:bool = True
     __ADS__:str = "ca-pub-7507574593260609"
     __nav__:Dict[str, str] = {'bubble': '종목 분포', 'macro': '경제 지표', 'portfolio': '투자 종목'}
-    __mem__:Dict[str, Union[str, Any]] = {
-        "meta": [
-            {"charset": "UTF-8"},
-            {"name": "viewport", "content": "width=device-width, initial-scale=1, shrink-to-fit=no"},
-        ],
-        "link": [
-            {"rel": "stylesheet", "href": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"},
-            {"rel": "stylesheet", "href": "/src/css/select2.min.css"},
-            {"rel": "stylesheet", "href": "/src/css/style.min.css"},
-        ],
-        "tscript": [
-                {"src": "/src/js/jquery-3.6.1.min.js"},
-                {"src": "/src/js/plotly-2.35.2-r0.1.min.js"},
-                {"src": "/src/js/select2.min.js"},
-        ],
-        "bscript": [
-
-        ],
-        "logo_img": "/src/img/logo-text.png",
-        "ad1": {},
-        "footer_img": "/src/img/logo-footer.png",
-        "footer_notice": "본 홈페이지는 <b>개인 블로그</b>이며 여기서 취득한 어떤 정보도 법적인 효력을 갖지 못합니다. 모든 투자의 책임은 당사자에게 있습니다. 참고한 정보의 출처는 신뢰할 만하나, 열람 시점이나 제공처의 사정 따라 정보의 정확성이 달라질 수 있습니다.",
-        "footer_contact": "snob.labwons@gmail.com"
-    }
 
     def __getitem__(self, item) -> Union[Dict, List[Dict], str]:
         kwargs = super().__getitem__(item)
@@ -83,8 +59,32 @@ class DefaultKwargs(Dict):
         return kwargs
 
     def __init__(self):
-        super().__init__(self.__mem__)
-        self["nav"] = self.navigate()
+        __mem__ = self.__mem__ = {
+            "meta": [
+                {"charset": "UTF-8"},
+                {"name": "viewport", "content": "width=device-width, initial-scale=1, shrink-to-fit=no"},
+            ],
+            "link": [
+                {"rel": "stylesheet", "href": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"},
+                {"rel": "stylesheet", "href": "/src/css/select2.min.css"},
+                {"rel": "stylesheet", "href": "/src/css/style.min.css"},
+            ],
+            "tscript": [
+                    {"src": "/src/js/jquery-3.6.1.min.js"},
+                    {"src": "/src/js/plotly-2.35.2-r0.1.min.js"},
+                    {"src": "/src/js/select2.min.js"},
+            ],
+            "bscript": [
+
+            ],
+            "logo_img": "/src/img/logo-text.png",
+            "ad1": {},
+            "footer_img": "/src/img/logo-footer.png",
+            "footer_notice": "본 홈페이지는 <b>개인 블로그</b>이며 여기서 취득한 어떤 정보도 법적인 효력을 갖지 못합니다. 모든 투자의 책임은 당사자에게 있습니다. 참고한 정보의 출처는 신뢰할 만하나, 열람 시점이나 제공처의 사정 따라 정보의 정확성이 달라질 수 있습니다.",
+            "footer_contact": "snob.labwons@gmail.com"
+        }
+        __mem__["nav"] = self.navigate()
+        super().__init__(__mem__)
         return
 
     def __iter__(self):

@@ -138,7 +138,9 @@
         </div>
       </div>
     </footer>
-	<script type="text/javascript" src="./src/js/common.min.js"></script>
+	<script type="text/javascript" src="/src/js/common.min.js"></script>
+    {% for _script in bscript %}
+    <script{% for key, value in _script.items() %} {{ key }}="{{ value }}"{% endfor %}></script>{% endfor %}
     <script>
 		document.addEventListener("selectstart", function(e) {e.preventDefault();});
 		$(window).on('load', function(){(adsbygoogle = window.adsbygoogle || []).push({});})

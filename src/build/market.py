@@ -26,7 +26,7 @@ if __name__ == "__main__":
         baseline = MarketBaseline(update=False)
         if not PATH.BASE.startswith('http'):
             with open(PATH.BASE, 'w') as f:
-                f.write(baseline.to_json(orient='index').replace("nan", ""))
+                f.write(baseline.to_json(orient='index').replace("nan", "null"))
         context = f'[{"Fail" if baseline.log.count("Fail") else "Success"}] BUILD Baseline\n{baseline.log}\n\n'
 
         marketmap = MarketMap(baseline)
@@ -39,7 +39,7 @@ if __name__ == "__main__":
                 'woS': marketmap[marketmap.index.str.isdigit() | marketmap.index.str.startswith('N')].index.tolist()
             }
             with open(PATH.MAP, 'w') as f:
-                f.write(dumps(service))
+                f.write(dumps(service).replace("nan", "null").replace("NaN", "null"))
         context += f'[Success] Build Market-Map\n{marketmap.log}\n\n'
 
         prefix = "SUCCESS" if not baseline.log.count("Fail") + marketmap.log.count("Fail") else "WARNING"
