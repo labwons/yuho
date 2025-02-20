@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>LAB￦ONS</title>
+    {% for _meta in meta %}
+    <meta{% for key, value in _meta.items() %} {{ key }}="{{ value }}"{% endfor %}>{% endfor %}
+    {% for _link in link %}
+    <link{% for key, value in _link.items() %} {{ key }}="{{ value }}"{% endfor %}>{% endfor %}
+    {% for _script in tscript %}
+    <script{% for key, value in _script.items() %} {{ key }}="{{ value }}"{% endfor %}></script>{% endfor %}
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-KJFQ72Z8');</script>
+</head>
+<body>
+    <header id="header" class="header header-fix">
+        <a href="/" class="logo"><img src="{{ logo_img }}" alt="LAB￦ONS"></a>
+        <nav id="navbar" class="navbar">
+            <ul>{% for _nav in nav %}
+                <li><a href="{{ _nav['href'] }}">{{ _nav['content'] }}</a></li>{% endfor %}
+            </ul>
+            <i class="fa fa-bars navbar-button"></i>
+        </nav>
+    </header>
+
+    <main id="main">
+		
+		<section class="service-title">
+			<div class="title">
+				<h1 class="title-name">{{ title }}</h1>
+				<span class="title-date">{{ trading_date }}</span>
+			</div>
+			<div class="ads ad-title-h">
+				<ins {% for key, val in ad1.items() %}{{ key }}="{{ val }}" {% endfor %}></ins>
+			</div>
+		</section>
+		
+        <section class="service-section">
+            <div class="service">
+                <div class="service-nav">
+                    <div class="service-opt-l">{{ service_opt_l }}</div>
+                    <div class="service-opt-r">{{ service_opt_r }}</div>
+                </div>
+                <div class="service-app">
+                    <div class="plot" id="plotly">{{ app_icon }}</div>
+                </div>
+                <div class="service-footer">
+					<div class="service-legend">{{ service_items }}</div>
+					<div class="service-notice">{{ service_notice }}</div>
+				</div>
+            </div>
+        </section>
+		
+		<div class="ads ad-middle-h"></div>
+				
+		<section class="faq">			
+			
+			<div class="faq-header">
+			  <h2>자주 묻는 질문 F.A.Q</h2>
+			</div>
+			{% set half = (faq|length + 1) // 2 %}
+			<div class="faq-container">
+				<div class="faq-column">
+					{% for _faq in faq %}{% if loop.index <= half %}<div class="faq-item">
+						<div class="faq-question faq-question-{{ loop.index }}">
+							<span>{{ _faq['q'] }}</span>
+							<i class="fa fa-chevron-down"></i>
+						</div>
+						<div class="faq-content faq-content-{{ loop.index }} collapse">
+							{{ _faq['a'] }}
+						</div>
+					</div>
+					{% endif %}
+					{% endfor %}
+            
+				</div>
+				<div class="faq-column">
+					{% for _faq in faq %}{% if half < loop.index %}<div class="faq-item">
+						<div class="faq-question faq-question-{{ loop.index }}">
+							<span>{{ _faq['q'] }}</span>
+							<i class="fa fa-chevron-down"></i>
+						</div>
+						<div class="faq-content faq-content-{{ loop.index }} collapse">
+							{{ _faq['a'] }}
+						</div>
+					</div>
+					{% endif %}
+					{% endfor %}
+            
+				</div>
+			</div>
+			
+		</section>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-basis">
+        <div class="footer-container">
+          <div class="footer-info">
+            <a href="/" class="logo">
+              <img src="{{ footer_img }}" alt="LAB￦ONS">
+            </a>
+            <p>{{ footer_notice }}</p>
+          </div>
+
+          <div class="footer-links">
+            <div class="footer-link">
+              <h4>주요 정보 출처</h4>
+              <ul>
+                <li><i class="fa fa-chevron-right"></i> <a href="http://data.krx.co.kr/contents/MDC/MAIN/main/index.cmd">한국거래소</a></li>
+                <li><i class="fa fa-chevron-right"></i> <a href="https://dart.fss.or.kr/">전자공시시스템</a></li>
+                <li><i class="fa fa-chevron-right"></i> <a href="https://finance.naver.com/">네이버증권</a></li>
+                <li><i class="fa fa-chevron-right"></i> <a href="https://comp.fnguide.com/SVO2/ASP/SVD_main.asp?pGB=1&gicode=A005930&cID=&MenuYn=Y&ReportGB=&NewMenuID=11&stkGb=&strResearchYN=">에프앤가이드</a></li>
+                <li><i class="fa fa-chevron-right"></i> <a href="https://news.einfomax.co.kr/">연합인포맥스</a></li>
+              </ul>
+            </div>
+
+            <div class="footer-link">
+              <h4>서비스 바로가기</h4>
+              <ul>{% for _nav in nav %}
+                <li><i class="fa fa-chevron-right"></i><a href="{{ _nav['href'] }}">{{ _nav['content'] }}</a></li>{% endfor %}
+            </ul>
+            </div>
+          </div>
+
+          <div class="footer-contact">
+            <h4>연락처</h4>
+            <p><strong><i class="fa fa-envelope-o"></i></strong> {{ footer_contact }}</p>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="copyright">
+          &copy; Copyright LAB<strong>￦</strong>ONS. All Rights Reserved
+        </div>
+        <div class="credits">
+          Designed By. YUHO DAD
+        </div>
+      </div>
+    </footer>
+	<script type="text/javascript" src="./src/js/common.min.js"></script>
+    <script>
+		document.addEventListener("selectstart", function(e) {e.preventDefault();});
+		$(window).on('load', function(){(adsbygoogle = window.adsbygoogle || []).push({});})
+	</script>
+</body>
+</html>

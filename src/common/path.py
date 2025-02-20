@@ -1,8 +1,19 @@
 import os
 
 
-class PATH:
+class container:
+    __slot__ = {}
+    def __init__(self):
+        return
+    def __repr__(self):
+        return "\n".join([f"{key}: {path}" for key, path in self.__slot__.items() if isinstance(path, str) ])
+    def __setattr__(self, key, value):
+        self.__slot__[key] = value
+    def __getattr__(self, item):
+        return self.__slot__[item]
 
+
+class PATH:
     try:
         ROOT = os.path.dirname(__file__)
         while not ROOT.endswith('yuho'):
@@ -16,12 +27,6 @@ class PATH:
     except KeyError:
         DESKTOP = DOWNLOADS = ROOT
 
-    class html:
-        def __init__(self, root:str):
-            self.MAP = os.path.join(root, r'docs/index.html')
-            self.BUBBLE = os.path.join(root, r'docs/bubble/index.html')
-            self.MACRO = os.path.join(root, r'docs/macro/index.html')
-
     BASE   = os.path.join(ROOT, r'src/fetch/market/json/baseline.json')
     GROUP  = os.path.join(ROOT, r'src/fetch/market/json/group.json')
     INDEX  = os.path.join(ROOT, r'src/fetch/market/json/index.json')
@@ -33,16 +38,22 @@ class PATH:
     MAP    = os.path.join(ROOT, r'docs/src/json/treemap.json')
     MACRO  = os.path.join(ROOT, r'docs/src/json/macro.json')
 
-    HTML = html(ROOT)
+    # HTML = html(ROOT)
+    HTML = container()
+    HTML.MAP = os.path.join(ROOT, r'docs/index.html')
+    HTML.BUBBLE = os.path.join(ROOT, r'docs/bubble/index.html')
+    HTML.MACRO = os.path.join(ROOT, r'docs/macro/index.html')
+    HTML.TEMPLATES = os.path.join(ROOT, r'src/render/templates')
 
 
 
 
 
 if __name__ == "__main__":
-    print(PATH.ROOT)
-    print(PATH.GROUP)
-    print(PATH.STATE)
-    print(PATH.SPEC)
-    print(PATH.INDEX)
-    print(PATH.MAP)
+    # print(PATH.ROOT)
+    # print(PATH.GROUP)
+    # print(PATH.STATE)
+    # print(PATH.SPEC)
+    # print(PATH.INDEX)
+    # print(PATH.MAP)
+    print(PATH.HTML)

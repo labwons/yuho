@@ -1,14 +1,36 @@
 try:
     from ..common.path import PATH
-    from .minify import minifyCss
 except ImportError:
     from src.common.path import PATH
-    from src.deploy.minify import minifyCss
 from typing import Any, Dict, List, Union
-import os
+import csscompressor, jsmin, os
 
 
-minifyCss()
+class minify:
+
+    @classmethod
+    def css(cls):
+        for _dir, _folder, _files in os.walk(PATH.DOCS):
+            for _file in _files:
+                if _file.endswith('css') and not _file.endswith('.min.css'):
+                    with open(os.path.join(_dir, _file), 'r', encoding='utf-8') as file:
+                        src = file.read()
+                    with open(os.path.join(_dir, _file.replace(".css", ".min.css")), "w") as file:
+                        file.write(csscompressor.compress(src))
+        return
+
+    @classmethod
+    def js(cls):
+        for _dir, _folder, _files in os.walk(PATH.DOCS):
+            for _file in _files:
+                if _file.endswith('js') and not _file.endswith('.min.js'):
+                    with open(os.path.join(_dir, _file), 'r', encoding='utf-8') as file:
+                        src = file.read()
+                    with open(os.path.join(_dir, _file.replace(".js", ".min.js")), "w") as file:
+                        file.write(jsmin.jsmin(src))
+        return
+
+
 class DefaultKwargs(Dict):
 
     ADSENSE:bool = True
@@ -21,22 +43,20 @@ class DefaultKwargs(Dict):
         ],
         "link": [
             {"rel": "stylesheet", "href": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"},
-            {"rel": "stylesheet", "href": "./src/css/select2.min.css"},
-            {"rel": "stylesheet", "href": "./src/css/style.min.css"},
-            {"rel": "stylesheet", "href": "./src/css/marketmap.min.css"},
-            {"rel": "icon", "href": "./src/img/favicon.ico", "type": "image/x-icon"},
+            {"rel": "stylesheet", "href": "/src/css/select2.min.css"},
+            {"rel": "stylesheet", "href": "/src/css/style.min.css"},
         ],
         "tscript": [
-                {"src": "./src/js/jquery-3.6.1.min.js"},
-                {"src": "./src/js/plotly-2.35.2-r0.1.min.js"},
-                {"src": "./src/js/select2.min.js"},
+                {"src": "/src/js/jquery-3.6.1.min.js"},
+                {"src": "/src/js/plotly-2.35.2-r0.1.min.js"},
+                {"src": "/src/js/select2.min.js"},
         ],
         "bscript": [
 
         ],
-        "logo_img": "./src/img/logo-text.png",
+        "logo_img": "/src/img/logo-text.png",
         "ad1": {},
-        "footer_img": "./src/img/logo-footer.png",
+        "footer_img": "/src/img/logo-footer.png",
         "footer_notice": "본 홈페이지는 <b>개인 블로그</b>이며 여기서 취득한 어떤 정보도 법적인 효력을 갖지 못합니다. 모든 투자의 책임은 당사자에게 있습니다. 참고한 정보의 출처는 신뢰할 만하나, 열람 시점이나 제공처의 사정 따라 정보의 정확성이 달라질 수 있습니다.",
         "footer_contact": "snob.labwons@gmail.com"
     }
@@ -58,6 +78,8 @@ class DefaultKwargs(Dict):
                     "data-ad-format": "auto",
                     "data-full-width-responsive": "true",
                 })
+        if item == 'link':
+            kwargs.append({"rel": "icon", "href": "/src/img/favicon.ico", "type": "image/x-icon"})
         return kwargs
 
     def __init__(self):
