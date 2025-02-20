@@ -34,6 +34,8 @@ class minify:
 class DefaultKwargs(Dict):
 
     ADSENSE:bool = True
+    TESTMODE:bool = False
+    ROOT = '' if TESTMODE else '/docs'
     __ADS__:str = "ca-pub-7507574593260609"
     __nav__:Dict[str, str] = {'bubble': '종목 분포', 'macro': '경제 지표', 'portfolio': '투자 종목'}
 
@@ -55,7 +57,7 @@ class DefaultKwargs(Dict):
                     "data-full-width-responsive": "true",
                 })
         if item == 'link':
-            kwargs.append({"rel": "icon", "href": "/src/img/favicon.ico", "type": "image/x-icon"})
+            kwargs.append({"rel": "icon", "href": f"{self.ROOT}/src/img/favicon.ico", "type": "image/x-icon"})
         return kwargs
 
     def __init__(self):
@@ -66,24 +68,25 @@ class DefaultKwargs(Dict):
             ],
             "link": [
                 {"rel": "stylesheet", "href": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"},
-                {"rel": "stylesheet", "href": "/src/css/select2.min.css"},
-                {"rel": "stylesheet", "href": "/src/css/style.min.css"},
+                {"rel": "stylesheet", "href": f"{self.ROOT}/src/css/select2.min.css"},
+                {"rel": "stylesheet", "href": f"{self.ROOT}/src/css/style.min.css"},
             ],
             "tscript": [
-                    {"src": "/src/js/jquery-3.6.1.min.js"},
-                    {"src": "/src/js/plotly-2.35.2-r0.1.min.js"},
-                    {"src": "/src/js/select2.min.js"},
+                    {"src": f"{self.ROOT}/src/js/jquery-3.6.1.min.js"},
+                    {"src": f"{self.ROOT}/src/js/plotly-2.35.2-r0.1.min.js"},
+                    {"src": f"{self.ROOT}/src/js/select2.min.js"},
             ],
             "bscript": [
 
             ],
-            "logo_img": "/src/img/logo-text.png",
+            "logo_img": f"{self.ROOT}/src/img/logo-text.png" if not self.TESTMODE else "",
             "ad1": {},
-            "footer_img": "/src/img/logo-footer.png",
+            "footer_img": f"{self.ROOT}/src/img/logo-footer.png",
             "footer_notice": "본 홈페이지는 <b>개인 블로그</b>이며 여기서 취득한 어떤 정보도 법적인 효력을 갖지 못합니다. 모든 투자의 책임은 당사자에게 있습니다. 참고한 정보의 출처는 신뢰할 만하나, 열람 시점이나 제공처의 사정 따라 정보의 정확성이 달라질 수 있습니다.",
             "footer_contact": "snob.labwons@gmail.com"
         }
-        __mem__["nav"] = self.navigate()
+        if not self.TESTMODE:
+            __mem__["nav"] = self.navigate()
         super().__init__(__mem__)
         return
 

@@ -13,6 +13,7 @@ def render(test_mode:bool=False):
                .get_template('service_v2.html')
     kwargs = DefaultKwargs()
     kwargs.ADSENSE = True
+    kwargs.TESTMODE = test_mode
     kwargs['title'] = 'BUBBLE'
     kwargs['trading_date'] = '2025/02/20'
     # kwargs['link'] = {"rel": "stylesheet", "href": "./src/css/marketmap.min.css"}
@@ -43,9 +44,6 @@ def render(test_mode:bool=False):
         {'q': 'Testing Question 7', 'a': 'Testing Answer 7'},
     ]
 
-    if test_mode:
-        del kwargs['logo_img']
-        del kwargs['nav']
 
     service = template.render(**kwargs)
     with open(PATH.HTML.BUBBLE, 'w', encoding='utf-8') as file:
