@@ -16,7 +16,7 @@ except ImportError:
 
 if __name__ == "__main__":
 
-    TESTMODE = True
+    TESTMODE = False
 
     minify.css()
     minify.js()
