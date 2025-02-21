@@ -35,7 +35,6 @@ class DefaultKwargs(Dict):
 
     ADSENSE:bool = True
     TESTMODE:bool = False
-    ROOT = '' if TESTMODE else '/docs'
     __ADS__:str = "ca-pub-7507574593260609"
     __nav__:Dict[str, str] = {'bubble': '종목 분포', 'macro': '경제 지표', 'portfolio': '투자 종목'}
 
@@ -109,13 +108,16 @@ class DefaultKwargs(Dict):
         super().__setitem__(key, value)
         return
 
-    @classmethod
-    def navigate(cls) -> List[Dict[str, Union[str, dict]]]:
-        nav:List[Dict] = [{"href": "/", "content": "시장 지도"}]
+    @property
+    def ROOT(self) -> str:
+        return '' if self.TESTMODE else '/yuho'
+
+    def navigate(self) -> List[Dict[str, Union[str, dict]]]:
+        nav:List[Dict] = [{"href": f"{self.ROOT}/", "content": "시장 지도"}]
         for content in os.listdir(PATH.DOCS):
             if '.' in content or content == 'src':
                 continue
-            nav.append({'href': f'/{content}', 'content': cls.__nav__[content]})
+            nav.append({'href': f'{self.ROOT}/{content}', 'content': self.__nav__[content]})
             # TODO
             # Portfolio의 경우 Sub Menu를 href: /{종목코드} text: 종목명 으로 변경
             sub = []
@@ -124,3 +126,4 @@ class DefaultKwargs(Dict):
                     sub.append({'href': f'/{content}/{sub_content}', 'content': sub_content})
             nav[-1].update({'sub': sub})
         return nav
+

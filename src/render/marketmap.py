@@ -16,7 +16,7 @@ def render(test_mode:bool=False):
     kwargs.TESTMODE = test_mode
     kwargs['title'] = 'TESTING'
     kwargs['trading_date'] = '2025/02/20'
-    kwargs['link'] = {"rel": "stylesheet", "href": "/src/css/marketmap.min.css"}
+    kwargs['link'] = {"rel": "stylesheet", "href": f"{kwargs.ROOT}/src/css/marketmap.min.css"}
     kwargs['service_opt_l'] = '''
                         <select name="type" class="map-select map-type"></select>
                         <select name="option" class="map-select map-option"></select>
@@ -51,4 +51,4 @@ def render(test_mode:bool=False):
 
 
 if __name__ == "__main__":
-    render(test_mode=True)
+    render(test_mode=False)
