@@ -206,6 +206,8 @@ class MarketSpec(DataFrame):
         st['trailingRevenue'] = st[st.columns[0]].rolling(window=4, min_periods=1).sum()
         st['trailingProfit'] = st['영업이익(억원)'].rolling(window=4, min_periods=1).sum()
         st['trailingEps'] = st['EPS(원)'].rolling(window=4, min_periods=1).sum()
+        # TODO
+        # 영업이익률 계산 방식 변경 --> Trailing 말고 직전 회계연도 기준이 나을듯
         st['trailingProfitRate'] = st['trailingProfit'] / st['trailingRevenue'] * 100
         st['revenueGrowth'] = 100 * st[st.columns[0]].pct_change(fill_method=None)
         st['profitGrowth'] = 100 * st['영업이익(억원)'].pct_change(fill_method=None)

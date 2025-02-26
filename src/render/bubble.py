@@ -1,33 +1,41 @@
 try:
     from ..common.path import PATH
-    from .config import DefaultKwargs
+    from .config import Kwargs
 except ImportError:
     from src.common.path import PATH
-    from src.render.config import DefaultKwargs
+    from src.render.config import Kwargs
+from datetime import datetime
 from jinja2 import Environment, FileSystemLoader
+from pykrx.stock import get_nearest_business_day_in_a_week
 
 
 
-def render(test_mode:bool=False):
+def render(localhost:bool=False):
     template = Environment(loader=FileSystemLoader(PATH.HTML.TEMPLATES)) \
                .get_template('service_v2.html')
-    kwargs = DefaultKwargs()
-    kwargs.ADSENSE = True
-    kwargs.TESTMODE = test_mode
-    kwargs['title'] = 'BUBBLE'
-    kwargs['trading_date'] = '2025/02/20'
-    # kwargs['link'] = {"rel": "stylesheet", "href": "./src/css/marketmap.min.css"}
-    # kwargs['service_opt_l'] = '''
-    #                     <select name="type" class="map-select map-type"></select>
-    #                     <select name="option" class="map-select map-option"></select>
-    #                     <div class="map-button map-reset"><i class="fa fa-refresh"></i></div>
-    #                     <div class="map-button map-switch"><i class="fa fa-signal"></i></div>
-    #                 '''
-    # kwargs['service_opt_r'] = '''
-    #                      <select class="map-select map-searchbar"><option></option></select>
-    #                 '''
-    # kwargs['app_icon'] = '<i class="map-rewind fa fa-undo"></i>'
-    # kwargs['service_items'] = f'''{'<span class="map-legend"></span>' * 7}'''
+
+    date = f'{datetime.today().strftime("%Y/%m/%d")} 종가 기준'
+    try:
+        date = get_nearest_business_day_in_a_week()
+    except:
+        pass
+
+    kwargs = Kwargs(adsense=False, localhost=localhost)
+    kwargs.link = {"rel": "stylesheet", "href": f"/src/css/marketmap.min.css"}
+
+    kwargs['title'] = 'TESTING'
+    kwargs['trading_date'] = date
+    kwargs['service_opt_l'] = '''
+                        <select name="type" class="map-select map-type"></select>
+                        <select name="option" class="map-select map-option"></select>
+                        <div class="map-button map-reset"><i class="fa fa-refresh"></i></div>
+                        <div class="map-button map-switch"><i class="fa fa-signal"></i></div>
+                    '''
+    kwargs['service_opt_r'] = '''
+                         <select class="map-select map-searchbar"><option></option></select>
+                    '''
+    kwargs['app_icon'] = '<i class="map-rewind fa fa-undo"></i>'
+    kwargs['service_items'] = f'''{'<span class="map-legend"></span>' * 7}'''
     kwargs['service_notice'] = ('\ubaa8\ub4e0\u0020\ud22c\uc790\uc758\u0020\ucc45\uc784\uc740\u0020\ub2f9\uc0ac\uc790\uc5d0\uac8c\u0020\uc788\uc2b5\ub2c8\ub2e4\u002e\u0020'
                                 '\u002a\ud45c\uc2dc\ub294\u0020\ucf54\uc2a4\ub2e5\u0020\uc885\ubaa9\uc785\ub2c8\ub2e4\u002e'
                                 '\ucf54\uc2a4\ud53c\u0032\u0030\u0030\u002c\u0020\ucf54\uc2a4\ub2e5\u0031\u0035\u0030\u0020\ud3b8\uc131\u0020\uc885\ubaa9\uc73c\ub85c\u0020\uad6c\uc131\ub418\uc5c8\uc2b5\ub2c8\ub2e4\u002e '
@@ -44,12 +52,11 @@ def render(test_mode:bool=False):
         {'q': 'Testing Question 7', 'a': 'Testing Answer 7'},
     ]
 
-
-    service = template.render(**kwargs)
+    service = template.render(**kwargs.encode())
     with open(PATH.HTML.BUBBLE, 'w', encoding='utf-8') as file:
         file.write(service)
     return
 
 
 if __name__ == "__main__":
-    render(test_mode=True)
+    render(localhost=True)

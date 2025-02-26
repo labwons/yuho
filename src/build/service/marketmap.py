@@ -205,9 +205,14 @@ class MarketMap(DataFrame):
         self['meta'] = self['name'] + '(' + self.index + ')<br>' \
                      + '시가총액: ' + self['size'].apply(self._format_cap) + '원<br>' \
                      + '종가: ' + self['close'].apply(lambda x: f"{x:,d}원")
+        prior_sector = self[self["industryName"] == self["sectorName"]]["sectorName"] \
+                       .drop_duplicates() \
+                       .tolist()
+
 
         ws_industry = self._grouping("industryName")
         ws_industry.index = ws_industry.index.str.pad(width=6, side="left", fillchar='W')
+        ws_industry = ws_industry[~ws_industry["name"].isin(prior_sector)]
         ws_sector = self._grouping("sectorName")
         ws_sector["ceiling"] = "대형주"
         ws_sector.index = ws_sector.index.str.pad(width=6, side="left", fillchar='W')
@@ -217,6 +222,7 @@ class MarketMap(DataFrame):
 
         ns_industry = self._grouping("industryName", "005930")
         ns_industry.index = ns_industry.index.str.pad(width=6, side="left", fillchar='N')
+        ns_industry = ns_industry[~ns_industry["name"].isin(prior_sector)]
         ns_sector = self._grouping("sectorName", "005930")
         ns_sector["ceiling"] = "대형주(삼성전자 제외)"
         ns_sector.index = ns_sector.index.str.pad(width=6, side="left", fillchar='N')
@@ -320,6 +326,8 @@ class MarketMap(DataFrame):
         for col in self:
             if col in self.meta and (not self.meta[col]['round'] == -1):
                 self[col] = round(self[col], self.meta[col]['round'])
+            # if col in self.meta:
+            #     self[col] = self[col].astype(str).fillna(self.meta[col]['na'])
         return
 
     def show_gaussian(self):
@@ -468,9 +476,29 @@ if __name__ == "__main__":
 
     marketMap = MarketMap(MarketBaseline(update=False))
     print(marketMap)
-    print(marketMap.log)
+    # print(marketMap.log)
     # print(marketMap.meta)
     # print(marketMap.gaussian)
     # marketMap.show_gaussian()
-    # print(marketMap.colors)
-    print(marketMap.to_dict(orient='index'))
+    print(marketMap.colors)
+    # print(marketMap.to_dict(orient='index'))
+
+
+    # import plotly.graph_objs as go
+    #
+    # fig = go.Figure()
+    # df = marketMap[marketMap.index.str.isdigit() | marketMap.index.str.startswith('W')]
+    # key = 'D-1'
+    # trace = go.Treemap(
+    #     branchvalues='total',
+    #     labels=df['name'],
+    #     parents=df['ceiling'].fillna(""),
+    #     values=df["size"],
+    #     meta=df['meta'] + f"<br>{marketMap.meta[key]['label']}" + df[key].astype(str),
+    #     text=df[key],
+    #     textposition="middle center",
+    #     texttemplate='%{label}<br>%{text}',
+    #     hovertemplate="%{meta}" + "<extra></extra>",
+    # )
+    # fig.add_trace(trace)
+    # fig.show()

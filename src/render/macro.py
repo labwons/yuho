@@ -1,22 +1,22 @@
 try:
     from ..common.path import PATH
-    from .config import DefaultKwargs
+    from .config import Kwargs
 except ImportError:
     from src.common.path import PATH
-    from src.render.config import DefaultKwargs
+    from src.render.config import Kwargs
 from jinja2 import Environment, FileSystemLoader
 
 
 
-def render(test_mode:bool=False):
+def render(localhost:bool=False):
     template = Environment(loader=FileSystemLoader(PATH.HTML.TEMPLATES)) \
                .get_template('service_v2.html')
-    kwargs = DefaultKwargs()
-    kwargs.ADSENSE = True
-    kwargs.TESTMODE = test_mode
+
+    kwargs = Kwargs(adsense=False, localhost=localhost)
+    kwargs.link = {"rel": "stylesheet", "href": f"/src/css/marketmap.min.css"}
+
     kwargs['title'] = 'TESTING'
-    kwargs['trading_date'] = '2025/02/20'
-    kwargs['link'] = {"rel": "stylesheet", "href": "/src/css/marketmap.min.css"}
+
     kwargs['service_opt_l'] = '''
                         <select name="type" class="map-select map-type"></select>
                         <select name="option" class="map-select map-option"></select>
@@ -43,14 +43,12 @@ def render(test_mode:bool=False):
         {'q': 'Testing Question 6', 'a': 'Testing Answer 6'},
         {'q': 'Testing Question 7', 'a': 'Testing Answer 7'},
     ]
-    kwargs['bscript'] = {"src": "/src/js/marketmap.min.js"}
 
-
-    service = template.render(**kwargs)
+    service = template.render(**kwargs.encode())
     with open(PATH.HTML.MACRO, 'w', encoding='utf-8') as file:
         file.write(service)
     return
 
 
 if __name__ == "__main__":
-    render(test_mode=True)
+    render(localhost=True)

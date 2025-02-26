@@ -6,13 +6,13 @@
     <meta{% for key, value in _meta.items() %} {{ key }}="{{ value }}"{% endfor %}>{% endfor %}
     {% for _link in link %}
     <link{% for key, value in _link.items() %} {{ key }}="{{ value }}"{% endfor %}>{% endfor %}
-    {% for _script in tscript %}
-    <script{% for key, value in _script.items() %} {{ key }}="{{ value }}"{% endfor %}></script>{% endfor %}
+    {% for _script in script if _script["pos"] == "top" %}	
+    <script{% for key, value in _script.items() %} {% if key != "pos" %}{{ key }}="{{ value }}"{% endif %}{% endfor %}></script>{% endfor %}
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-KJFQ72Z8');</script>
 </head>
 <body>
     <header id="header" class="header header-fix">
-        <a href="/" class="logo"><img src="{{ logo_img }}" alt="LAB￦ONS"></a>
+        <a href="/" class="logo"><img src="{{ logo_header }}" alt="LAB￦ONS"></a>
         <nav id="navbar" class="navbar">
             <ul>{% for _nav in nav %}
                 <li><a href="{{ _nav['href'] }}">{{ _nav['content'] }}</a></li>{% endfor %}
@@ -29,7 +29,7 @@
 				<span class="title-date">{{ trading_date }}</span>
 			</div>
 			<div class="ads ad-title-h">
-				<ins {% for key, val in ad1.items() %}{{ key }}="{{ val }}" {% endfor %}></ins>
+				<ins {% for ad in ad_title %}{% for key, val in ad.items() %}{{ key }}="{{ val }}" {% endfor %}{% endfor %}></ins>
 			</div>
 		</section>
 		
@@ -96,9 +96,9 @@
         <div class="footer-container">
           <div class="footer-info">
             <a href="/" class="logo">
-              <img src="{{ footer_img }}" alt="LAB￦ONS">
+              <img src="{{ logo_footer }}" alt="LAB￦ONS">
             </a>
-            <p>{{ footer_notice }}</p>
+            <p>{{ notice }}</p>
           </div>
 
           <div class="footer-links">
@@ -123,7 +123,7 @@
 
           <div class="footer-contact">
             <h4>연락처</h4>
-            <p><strong><i class="fa fa-envelope-o"></i></strong> {{ footer_contact }}</p>
+            <p><strong><i class="fa fa-envelope-o"></i></strong> {{ contact }}</p>
           </div>
 
         </div>
@@ -134,13 +134,13 @@
           &copy; Copyright LAB<strong>￦</strong>ONS. All Rights Reserved
         </div>
         <div class="credits">
-          Designed By. YUHO DAD
+          Designed By. YUHO PAPA
         </div>
       </div>
     </footer>
+    {% for _script in script if _script["pos"] == "bottom" %}
+    <script{% for key, value in _script.items() %} {% if key != "pos" %}{{ key }}="{{ value }}"{% endif %}{% endfor %}></script>{% endfor %}
 	<script type="text/javascript" src="/src/js/common.min.js"></script>
-    {% for _script in bscript %}
-    <script{% for key, value in _script.items() %} {{ key }}="{{ value }}"{% endfor %}></script>{% endfor %}
     <script>
 		document.addEventListener("selectstart", function(e) {e.preventDefault();});
 		$(window).on('load', function(){(adsbygoogle = window.adsbygoogle || []).push({});})

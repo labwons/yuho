@@ -240,15 +240,13 @@ h1, h2, h3, h4, h5, h6 {
 .ad-title-h {
 	flex: 1 1 auto;	
 	max-width: 60%;
-	
-	background: rgba(255, 0, 0, 0.5); /* Testing */
+	background: rgba(242, 244, 249, 0.9);
 }
 
 .ad-service-v {
     flex: 0 0 15%;
 	margin-right: 4px;
-	
-	background: rgba(255, 0, 0, 0.5); /* Testing */
+	background: rgba(242, 244, 249, 0.9);
 }
 
 .ad-middle-h {
@@ -257,8 +255,7 @@ h1, h2, h3, h4, h5, h6 {
 	max-height: 100px;
 	height: 100px;
 	margin-top: 40px;
-	
-	background: rgba(255, 0, 0, 0.5); /* Testing */
+	background: rgba(242, 244, 249, 0.9);
 }
 
 /*--------------------------------------------------------------
@@ -329,7 +326,7 @@ h1, h2, h3, h4, h5, h6 {
     justify-content: space-between;
 	gap: 2px;
 
-	background: rgba(211, 211, 211, 0.5); /* Testing: LightGrey */
+	/* background: rgba(211, 211, 211, 0.5);  Testing: LightGrey */
 }
 
 .service-section .service .service-nav {
@@ -367,7 +364,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .service-section .service .service-app .plot {
 	flex: 1 0 auto;
-	background-color:grey;
+	
+	/* background-color:grey; Test */
 }
 
 .service-section .service .service-footer {
@@ -389,9 +387,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .service-section .service .service-footer .service-notice {
-	font-size: 10px;
 	display: flex;
 	align-items: center;
+	font-size: 10px;
 }
 
 /* LAPTOP CASES */
