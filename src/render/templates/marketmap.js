@@ -12,21 +12,7 @@ const mapLayout = {
         r:0,
         t:0,
         b:25
-    },
-    annotations: [{
-        x: 1,
-        y: 1,
-        xref: 'paper',
-        yref: 'paper',
-        text: '{{ tradingDate }}',
-        showarrow: false,
-        xanchor: 'right',
-        yanchor: 'top',
-        font: {
-            size: 12,
-            color: 'white'
-        }
-    }]
+    }
 };
 const barLayout = {
     margin:{

@@ -33,7 +33,7 @@ if __name__ == "__main__":
     from pykrx.stock import get_nearest_business_day_in_a_week
 
 
-    TESTMODE = False
+    TESTMODE = True
     TODAY = datetime.today().strftime("%Y/%m/%d")
     try:
         TRADING_DATE = datetime.strptime(get_nearest_business_day_in_a_week(), "%Y%m%d") \

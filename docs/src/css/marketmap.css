@@ -108,4 +108,18 @@
 		min-width: 100%;
 		width: 100% !important;
 	}
+	
+	.map-legend {
+		flex: 1 0 auto;
+		min-width: 40px;
+		max-height: 20px;
+		box-sizing: border-box;
+		display: flex;
+		flex-wrap: nowrap;
+		align-items: center;
+		justify-content: center;
+		font-size: 12px;
+		font-weight: 700;
+		color: white;
+	}	
 }
