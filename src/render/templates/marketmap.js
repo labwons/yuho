@@ -233,6 +233,9 @@ function setMap(key) {
             }
         },
         opacity: 0.9,
+        pathbar:{
+            visible: true,
+        }
     };
 
     Object.entries(srcTicker).forEach(([ticker, obj]) => {
@@ -277,7 +280,7 @@ $(document).ready(function(){
     setOption('.map-option', srcIndicatorOpt, 0);
     setSearchBar('.map-searchbar', srcTicker);
     setScaleBar('.map-legend', srcIndicatorOpt[$('.map-option').val()]);
-//    setMap($('.map-option').val());
+    setMap($('.map-option').val());
 
     $('.map-type').on('change', function(){
         if (VIEW_MODE){
@@ -286,7 +289,7 @@ $(document).ready(function(){
         } else {
             SAMSUNG = !SAMSUNG;
             setSearchBar('.map-searchbar', srcTicker);
-//            setMap($('.map-option').val());
+            setMap($('.map-option').val());
         }
     });
 
@@ -302,13 +305,13 @@ $(document).ready(function(){
     $('.map-switch i').click(function(){
         VIEW_MODE = !VIEW_MODE;
         if (VIEW_MODE) {
-            setOption('.map-type', srcBarOpt, 0);
+            setOption('.map-type', srcBarOpt, 1);
             setBar($('.map-option').val());
             $(this).removeClass('fa-signal').addClass('fa-map-o');
             $('.map-searchbar').prop('disabled', true);
         } else {
             setOption('.map-type', srcMapOpt, 0);
-//            setMap($('.map-option').val());
+            setMap($('.map-option').val());
             $(this).removeClass('fa-map-o').addClass('fa-signal');
             $('.map-searchbar').prop('disabled', false);
         }
@@ -321,6 +324,28 @@ $(document).ready(function(){
             eventClickTreemap(ticker.name);
         }, 1000);
     });
+
+    $('#plotly').on('plotly_doubleclick', function() {
+        console.log("@@");
+        setMap($('.map-option').val());
+    })
+
+    $('#plotly').on('plotly_click', function(e, d){
+        if (!VIEW_MODE) {
+//            if ($('g.slice').length == 1) {
+//            rewindOff();
+//            } else if (
+//            (!d.points[0].customdata.startsWith('W')) &&
+//            (!d.points[0].customdata.startsWith('G')) &&
+//            (!d.points[0].customdata.startsWith('T'))
+//            ) {
+//            rewindOn();
+//            } else {
+//            return;
+//            }
+
+        }
+    })
 
 })
 

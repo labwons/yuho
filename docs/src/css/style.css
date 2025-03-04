@@ -5,6 +5,20 @@
   |  TABLET  |  768px <= width < 1024px
   |    PC    | 1024px <= width
 --------------------------------------------------------------*/
+/* LAPTOP CASES */
+@media screen and (max-width: 1443px) {
+
+}
+
+/* TABLET CASES */
+@media screen and (max-width: 1023px) {
+
+}
+
+/* MOBILE CASES */
+@media screen and (max-width: 767px) {
+	
+}
 
 /*--------------------------------------------------------------
 # General
@@ -16,7 +30,6 @@
 .no-select {
   -webkit-user-select: none; /* Chrome, Safari */
   -moz-user-select: none;    /* Firefox */
-  -ms-user-select: none;     /* Internet Explorer */
   user-select: none;         /* 표준 */
 }
 
@@ -258,6 +271,25 @@ h1, h2, h3, h4, h5, h6 {
 	background: rgba(242, 244, 249, 0.9);
 }
 
+/* LAPTOP CASES */
+@media screen and (max-width: 1443px) {
+
+}
+
+/* TABLET CASES */
+@media screen and (max-width: 1023px) {
+
+}
+
+/* MOBILE CASES */
+@media screen and (max-width: 767px) {
+	.ad-title-h {
+		min-height: 240px;
+		max-width: 100%;
+		margin-bottom: 12px;
+	}
+}
+
 /*--------------------------------------------------------------
 # main
 --------------------------------------------------------------*/
@@ -311,11 +343,6 @@ h1, h2, h3, h4, h5, h6 {
 	height: calc(100vh - 60px);
     margin: 0;
     padding: 0;
-}
-
-.service-section .ad-service-v .adsbygoogle {
-    width: 100%;
-    overflow: hidden;
 }
 
 .service-section .service {
@@ -399,36 +426,122 @@ h1, h2, h3, h4, h5, h6 {
 
 /* TABLET CASES */
 @media screen and (max-width: 1023px) {
-    .service-section {
-        flex-direction: column;
-        height: auto;
-        margin: 0 20px;
-        padding-top: 0;
-    }
+
 }
 
+/* MOBILE CASES */
 @media screen and (max-width: 767px) {
-    .service-section {
-        flex-direction: column;
-        height: auto;
-        margin: 0 10px;
-        padding-top: 0;
-    }
+	#main {		
+		padding: 10px 10px 20px;
+	}
+	
+	.service-title {
+		flex: 1 0 100%;
+		display: flex;
+		flex-direction: column-reverse;
+		align-items: stretch;
+		justify-content: flex-start;
+		box-sizing: border-box;
+		margin-bottom: 4px;
+	}
 
-    .service-section .service .service-nav {
-        flex-direction: column;
-        height: auto;
-    }
+	.service-title .title {
+		flex: 0 0 auto;
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+		justify-content: flex-start;	
+		padding: 0;
+		margin-bottom: 6px;
+	}
 
-    .service-section .service .service-app {
-        height: calc(100vh - 160px);
-        margin-top: 4px;
-    }
+	.service-title .title .title-name {
+		margin: 0;
+		font-size: 24px;
+	}
 
-    .service-section .service .service-footer {
-        height: auto;
-        flex-direction: column;
-    }
+	.service-title .title .title-date {
+		font-size: 12px;
+	}
+	
+	.service-section {
+		/* Inherited */
+	}
+
+	.service-section .service {
+		flex: 1 1 auto;
+		display: flex;
+		flex-direction: column;
+		flex-wrap: nowrap;
+		justify-content: flex-start;
+		gap: 4px;
+
+		/* background: rgba(211, 211, 211, 0.5);  Testing: LightGrey */
+	}
+
+	.service-section .service .service-nav {		
+		flex: 0 0 auto;
+		width: auto;
+		height: auto;
+		display: flex;
+		flex-direction: column;
+		flex-wrap: nowrap;
+		align-items: flex-start;
+		justify-content: flex-start;    
+		font-size: 12px;
+		gap:4px;
+	}
+
+	.service-section .service .service-nav .service-opt-l {
+		flex: 1 0 auto;
+		display: flex;
+		flex-direction: row;
+		flex-wrap: nowrap;
+		justify-content: flex-start;
+		gap: 4px;
+	}
+	.service-section .service .service-nav .service-opt-r {
+		flex: 1 0 auto;
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-start;
+		align-items: flex-start;
+	}
+
+	.service-section .service .service-app {
+		flex: 1 1 auto;
+		display: flex;
+	}
+
+	.service-section .service .service-app .plot {
+		flex: 1 0 auto;
+		
+		/* background-color:grey; Test */
+	}
+
+	.service-section .service .service-footer {
+		flex: 0 1 auto;
+		width: 100%;
+		max-height: 36px;
+		display: flex;
+		flex-direction: row;
+		align-items: stretch;
+		justify-content: flex-start;
+		gap: 8px;
+	}
+	.service-section .service .service-footer .service-legend {
+		flex: 0 0 auto;
+		display: flex;
+		flex-direction: row;
+		align-items:stretch;
+		justify-content:space-between;
+	}
+
+	.service-section .service .service-footer .service-notice {
+		display: flex;
+		align-items: center;
+		font-size: 10px;
+	}
 }
 
 .faq {

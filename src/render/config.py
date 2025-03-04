@@ -46,7 +46,7 @@ class Kwargs:
         self.__link__:List[Dict] = [
             {"rel": "stylesheet", "href": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"},
             {"rel": "stylesheet", "href": f"{root}/src/css/select2.min.css"},
-            {"rel": "stylesheet", "href": f"{root}/src/css/style.min.css"},
+            {"rel": "stylesheet", "href": f"{root}/src/css/style{'' if localhost else '.min'}.css"},
         ]
         self.__script__:List[Dict] = [
             {"src": f"{root}/src/js/jquery-3.6.1.min.js", "pos": "top"},
