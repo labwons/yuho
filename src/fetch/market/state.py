@@ -58,33 +58,33 @@ class MarketState(DataFrame):
             return
 
         date = get_nearest_business_day_in_a_week()
-        self.log = f'RUN [Market State Fetch] @{date}'
+        self.log = f'Begin [Market State Fetch] @{date}'
 
         fdef = [self.fetchMarketCap, self.fetchMultiples, self.fetchForeignRate]
         ks = concat([func(date, 'KOSPI') for func in fdef], axis=1)
         ks['market'] = 'kospi'
-        self.log = f'... Fetch KOSPI Market State :: {"FAILED" if ks.empty else "SUCCESS"}'
+        self.log = f'... Fetch KOSPI Market State :: {"Fail" if ks.empty else "Success"}'
         kq = concat([func(date, 'KOSDAQ') for func in fdef], axis=1)
         kq['market'] = 'kosdaq'
-        self.log = f'... Fetch KOSDAQ Market State :: {"FAILED" if kq.empty else "SUCCESS"}'
+        self.log = f'... Fetch KOSDAQ Market State :: {"Fail" if kq.empty else "Success"}'
         market = concat([ks, kq], axis=0)
 
         market = market[
             (~market.index.isin(self.fetchKonexList(date))) &
             (market.index.isin(self.fetchIpoList().index)) &
             (~market['shares'].isna())
-            ]
+        ]
         market = market[market['marketCap'] >= market['marketCap'].median()]
 
         returns = self.fetchReturns(date, market.index)
-        self.log = f'... Fetch Returns :: {"FAILED" if returns.empty else "SUCCESS"}'
+        self.log = f'... Fetch Returns :: {"Fail" if returns.empty else "Success"}'
 
         merge = returns.join(market, how='left')
         merge = merge.sort_values(by='marketCap', ascending=False)
         merge["date"] = datetime.strptime(date, "%Y%m%d").strftime("%Y/%m/%d")
         super().__init__(merge)
 
-        self.log = f'END [Market State Fetch] / Elapsed: {time() - stime:.2f}s'
+        self.log = f'End [Market State Fetch] / Elapsed: {time() - stime:.2f}s'
         return
 
     @property
@@ -149,6 +149,7 @@ class MarketState(DataFrame):
     def fetchReturns(cls, date: str, tickers: Iterable = None) -> DataFrame:
         tdate = datetime.strptime(date, "%Y%m%d")
         intv = {key: tdate - timedelta(val) for key, val in INTERVALS.items()}
+
         objs = {
             key: cls.fetchMarketCap(val.strftime("%Y%m%d"))
             for key, val in intv.items()
@@ -157,7 +158,7 @@ class MarketState(DataFrame):
         base = base[base.index.isin(tickers)]
 
         returns = concat({
-            dt: base[dt]['close'] / base['D+0']['close'] - 1 for dt in objs
+            dt: base['D+0']['close'] / base[dt]['close'] - 1 for dt in objs
         }, axis=1)
         returns.drop(columns=['D+0'], inplace=True)
 
@@ -172,7 +173,7 @@ class MarketState(DataFrame):
 
 
 if __name__ == "__main__":
-    marketState = MarketState(False)
+    marketState = MarketState(True)
     print(marketState)
-    # print(marketState.log)
+    print(marketState.log)
 

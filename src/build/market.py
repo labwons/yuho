@@ -46,14 +46,15 @@ if __name__ == "__main__":
 
     if not LOCAL_HOST:
         from pykrx.stock import get_nearest_business_day_in_a_week
+
         if get_nearest_business_day_in_a_week() != datetime.today().strftime("%Y%m%d"):
             raise SystemExit
 
-    KST = timezone(timedelta(hours=9))
-    clk = datetime.now(KST)
-    while clk.minute < 31:
-        sleep(30)
+        KST = timezone(timedelta(hours=9))
         clk = datetime.now(KST)
+        while clk.minute < 31:
+            sleep(30)
+            clk = datetime.now(KST)
 
 
     mail = eMail()
