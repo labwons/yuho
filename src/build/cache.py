@@ -27,7 +27,6 @@ if __name__ == "__main__":
         if not PATH.GROUP.startswith('http'):
             with open(PATH.GROUP, 'w') as f:
                 f.write(group.to_json(orient='index').replace("nan", ""))
-
         prefix_group = "PARTIALLY FAILED" if "FAIL" in group.log else "SUCCESS"
         context += [f"- [{prefix_group}] MARKET GROUP: ", group.log, ""]
     except Exception as report:

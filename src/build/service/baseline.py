@@ -8,7 +8,7 @@ except ImportError:
     from src.fetch.market.spec import MarketSpec
 from datetime import datetime
 from numpy import nan
-from pandas import DataFrame
+from pandas import DataFrame, read_json
 from time import time
 from typing import Any, Dict, List
 if "PATH" not in globals():
@@ -294,10 +294,15 @@ class MarketBaseline(DataFrame):
     def __init__(self, update:bool=True):
         stime = time()
         self.log = f'Begin [Build Market Baseline] @{datetime.today().strftime("%Y-%m-%d")[2:]}'
+        if not update:
+            super().__init__(read_json(PATH.BASE, orient='index'))
+            self.index = self.index.astype(str).str.zfill(6)
+            self.log = f'End [Build Market Baseline] {len(self)} Stocks / Elapsed: {time() - stime:.2f}s'
+            return
 
         spec = MarketSpec(update=False)
         group = MarketGroup(update=False)
-        state = MarketState(update=update)
+        state = MarketState(update=True)
         merge = state.join(spec).join(group)
         if state.log:
             self.log = state.log

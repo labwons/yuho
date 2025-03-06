@@ -33,7 +33,7 @@ if __name__ == "__main__":
 
 
     PRINT_DATA('display.expand_frame_repr', False)
-    LOCAL_HOST = False
+    LOCAL_HOST = True
 
 
     mail = eMail()
@@ -94,5 +94,8 @@ if __name__ == "__main__":
     if LOCAL_HOST:
         print(mail.subject)
         print(mail.context)
+        print(baseline)
+        print("-" * 50)
+        print(marketMap)
     else:
         mail.send()
