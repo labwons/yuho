@@ -30,10 +30,11 @@ if __name__ == "__main__":
         from src.build.service.marketmap import MarketMap
     from jinja2 import Environment, FileSystemLoader
     from json import dumps
+    import os
 
 
     PRINT_DATA('display.expand_frame_repr', False)
-    LOCAL_HOST = True
+    LOCAL_HOST = True if not os.getenv('LOCAL_HOST') else False
 
 
     mail = eMail()
@@ -99,3 +100,4 @@ if __name__ == "__main__":
         print(marketMap)
     else:
         mail.send()
+
