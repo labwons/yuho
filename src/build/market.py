@@ -65,7 +65,9 @@ if __name__ == "__main__":
         baseline = MarketBaseline(update=False)
         prefix_baseline = "FAILED"
         context += [f'- [{prefix_baseline}] BUILD Baseline', f'  : {error}', '* Using latest baseline', '']
-    TRADING_DATE = f"{datetime_as_string(baseline['date'].values[0], unit='D').replace('-', '/')}"
+    TRADING_DATE = baseline['date'].values[0]
+    if not isinstance(TRADING_DATE, str):
+        TRADING_DATE = f"{datetime_as_string(TRADING_DATE, unit='D').replace('-', '/')}"
 
 
     marketMap = MarketMap(baseline, TRADING_DATE)
@@ -84,7 +86,7 @@ if __name__ == "__main__":
                 file.write(mapJs)
         context += [f'- [SUCCESS] BUILD Market-Map', marketMap.log, '']
     except Exception as error:
-        context += [f'- [FAILED] BUILD Market-Map', f'{error}', '']
+        context += [f'- [FAILED] BUILD Market-Map', f'  : {error}', '']
 
     minify.css()
     minify.js()
