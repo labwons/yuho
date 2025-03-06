@@ -30,6 +30,7 @@ if __name__ == "__main__":
         from src.build.service.marketmap import MarketMap
     from jinja2 import Environment, FileSystemLoader
     from json import dumps
+    from numpy import datetime_as_string
     import os
 
 
@@ -51,7 +52,7 @@ if __name__ == "__main__":
         baseline = MarketBaseline(update=False)
         prefix_baseline = "FAILED"
         context += [f'[{prefix_baseline}] BUILD Baseline', f'{error}', '']
-    TRADING_DATE = f"{baseline['date'].values[0]}"
+    TRADING_DATE = f"{datetime_as_string(baseline['date'].values[0], unit='D').replace('-', '/')}"
 
 
     marketMap = MarketMap(baseline)
