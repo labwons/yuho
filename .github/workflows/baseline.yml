@@ -9,7 +9,7 @@
 name: BUILD BASELINE
 on:
   schedule:
-    - cron: '35 6 * * 1-5'
+    - cron: '31 6 * * 1-5'
   workflow_dispatch:
 
 jobs:
