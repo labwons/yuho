@@ -35,6 +35,7 @@ jobs:
     - name: Run application
       run: |
         export PYTHONPATH=$PYTHONPATH:$(pwd)/src
+        export LOCAL_HOST=True
         python src/build/market.py
 
     - name: Commit and Push changes
