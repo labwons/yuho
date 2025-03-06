@@ -5,6 +5,7 @@ CONTACT : snob.labwons@gmail.com
 ROUTINE : 15:40+09:00UTC on weekday
 """
 if __name__ == "__main__":
+    from pandas import set_option as DATAFRAME_PRINT
     try:
         from ..common.path import PATH
         from ..common.report import eMail
@@ -27,19 +28,13 @@ if __name__ == "__main__":
         )
         from src.build.service.baseline import MarketBaseline
         from src.build.service.marketmap import MarketMap
-    from datetime import datetime
     from jinja2 import Environment, FileSystemLoader
     from json import dumps
-    from pykrx.stock import get_nearest_business_day_in_a_week
 
 
-    TESTMODE = False
-    TODAY = datetime.today().strftime("%Y/%m/%d")
-    try:
-        TRADING_DATE = datetime.strptime(get_nearest_business_day_in_a_week(), "%Y%m%d") \
-                  .strftime("%Y/%m/%d") + ' 종가 기준'
-    except IndexError:
-        TRADING_DATE = TODAY + ' 종가 기준'
+    DATAFRAME_PRINT('display.expand_frame_repr', False)
+    LOCAL_HOST = False
+
 
     mail = eMail()
     try:
@@ -51,6 +46,7 @@ if __name__ == "__main__":
     except Exception as error:
         baseline = MarketBaseline(update=False)
         context = f'[Fail] BUILD Baseline: Fail-Safe to use previous data\n\tERROR: {error}\n\n'
+    TRADING_DATE = f"{baseline['date'].values[0]} 종가 기준"
 
 
     marketMap = MarketMap(baseline)
@@ -77,7 +73,7 @@ if __name__ == "__main__":
     minify.js()
 
     service = marketmap.render(
-        localhost=TESTMODE,
+        localhost=LOCAL_HOST,
         title="시장지도 MARKET MAP",
         trading_date=TRADING_DATE
     )

@@ -34,7 +34,7 @@ if __name__ == "__main__":
         context += [f"- [{prefix_group}] MARKET GROUP: ", group.log, ""]
     except Exception as report:
         prefix_group = 'FAILED'
-        context += [f"- [{prefix_group}] MARKET GROUP: ", report, ""]
+        context += [f"- [{prefix_group}] MARKET GROUP: ", f'{report}', ""]
 
     try:
         index = MarketIndex(update=True)
@@ -45,7 +45,7 @@ if __name__ == "__main__":
         context += [f"- [{prefix_index}] MARKET INDEX: ", index.log, ""]
     except Exception as report:
         prefix_index = "FAILED"
-        context += [f"- [{prefix_index}] MARKET INDEX: ", report, ""]
+        context += [f"- [{prefix_index}] MARKET INDEX: ", f'{report}', ""]
 
     try:
         spec = MarketSpec(update=True)
@@ -56,7 +56,7 @@ if __name__ == "__main__":
         context += [f"- [{prefix_spec}] MARKET SPECIFICATION: ", spec.log, ""]
     except Exception as report:
         prefix_spec = 'FAILED'
-        context += [f"- [{prefix_spec}] MARKET SPECIFICATION: ", report, ""]
+        context += [f"- [{prefix_spec}] MARKET SPECIFICATION: ", f'{report}', ""]
 
     if "PARTIALLY FAILED" in [prefix_group, prefix_index, prefix_spec]:
         prefix = "PARTIALLY FAILED"

@@ -473,14 +473,15 @@ if __name__ == "__main__":
     from pandas import set_option
 
     set_option('display.expand_frame_repr', False)
-
-    marketMap = MarketMap(MarketBaseline(update=False))
+    baseline = MarketBaseline(update=False)
+    print(baseline)
+    marketMap = MarketMap(baseline)
     print(marketMap)
     # print(marketMap.log)
     # print(marketMap.meta)
     # print(marketMap.gaussian)
     # marketMap.show_gaussian()
-    print(marketMap.colors)
+    # print(marketMap.colors)
     # print(marketMap.to_dict(orient='index'))
 
 

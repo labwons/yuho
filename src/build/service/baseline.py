@@ -277,6 +277,12 @@ METADATA = {
         'unit': '',
 		'round': -1,
     },
+    'date': {
+        'label': '날짜',
+        'description': '최근 거래일',
+        'unit': '',
+		'round': -1,
+    },
 }
 
 

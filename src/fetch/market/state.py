@@ -81,6 +81,7 @@ class MarketState(DataFrame):
 
         merge = returns.join(market, how='left')
         merge = merge.sort_values(by='marketCap', ascending=False)
+        merge["date"] = datetime.strptime(date, "%Y%m%d").strftime("%Y/%m/%d")
         super().__init__(merge)
 
         self.log = f'End [Market State Fetch] / Elapsed: {time() - stime:.2f}s'
@@ -172,6 +173,6 @@ class MarketState(DataFrame):
 
 if __name__ == "__main__":
     marketState = MarketState(False)
-    # print(marketState)
-    print(marketState.log)
+    print(marketState)
+    # print(marketState.log)
 
