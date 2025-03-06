@@ -38,6 +38,11 @@ if __name__ == "__main__":
 
     PRINT_DATA('display.expand_frame_repr', False)
     LOCAL_HOST = True if not os.getenv('LOCAL_HOST') else False
+    # -------------------------------------------------------------------------------
+    # INCASE YOU WANT TO BUILD, DEPLOY AND COMMIT ON LOCAL,
+    # SWITCH {LOCAL_HOST} TO False, AS BELOW
+    # -------------------------------------------------------------------------------
+    # LOCAL_HOST = False
 
     if not LOCAL_HOST:
         from pykrx.stock import get_nearest_business_day_in_a_week
