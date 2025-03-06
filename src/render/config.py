@@ -9,17 +9,14 @@ import csscompressor, jsmin, os
 class minify:
 
     @classmethod
-    def css(cls, localhost:bool=False):
+    def css(cls):
         for _dir, _folder, _files in os.walk(PATH.DOCS):
             for _file in _files:
                 if _file.endswith('css') and not _file.endswith('.min.css'):
                     with open(os.path.join(_dir, _file), 'r', encoding='utf-8') as file:
                         src = file.read()
                     with open(os.path.join(_dir, _file.replace(".css", ".min.css")), "w", encoding='utf-8') as file:
-                        syntax = csscompressor.compress(src)
-                        if not localhost:
-                            syntax.replace("/src", "/yuho/src")
-                        file.write(syntax)
+                        file.write(csscompressor.compress(src))
         return
 
     @classmethod

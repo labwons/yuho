@@ -23,40 +23,49 @@ if __name__ == "__main__":
 
     mail = eMail()
 
+    context = ['DETAILS']
     try:
         group = MarketGroup(update=True)
         if not PATH.GROUP.startswith('http'):
             with open(PATH.GROUP, 'w') as f:
                 f.write(group.to_json(orient='index').replace("nan", ""))
 
-        spec = MarketSpec(update=True)
-        if not PATH.SPEC.startswith('http'):
-            with open(PATH.SPEC, 'w') as f:
-                f.write(spec.to_json(orient='index').replace("nan", ""))
+        prefix_group = "PARTIALLY FAILED" if "FAIL" in group.log else "SUCCESS"
+        context += [f"- [{prefix_group}] MARKET GROUP: ", group.log, ""]
+    except Exception as report:
+        prefix_group = 'FAILED'
+        context += [f"- [{prefix_group}] MARKET GROUP: ", report, ""]
 
+    try:
         index = MarketIndex(update=True)
         if not PATH.INDEX.startswith('http'):
             with open(PATH.INDEX, 'w') as f:
                 f.write(index.to_json(orient='index').replace("nan", ""))
-
-        counts = group.log.count("Fail") + spec.log.count("Fail") + index.log.count("Fail")
-        prefix = "SUCCESS" if not counts else "WARNING"
-
-        mail.subject = f'[{prefix}] UPDATE BASELINE CACHE on {TODAY}'
-        mail.context = "\n".join([
-            "DETAILS:",
-            "- MARKET GROUP:",
-            group.log,
-            "",
-            "- MARKET INDEX:",
-            index.log,
-            "",
-            "STOCK SPEC:",
-            spec.log
-        ])
-
+        prefix_index = "PARTIALLY FAILED" if "FAIL" in index.log else "SUCCESS"
+        context += [f"- [{prefix_index}] MARKET INDEX: ", index.log, ""]
     except Exception as report:
-        mail.subject = f'[FAILED] UPDATE BASELINE CACHE on {TODAY}'
-        mail.context = f"{report}"
-    finally:
-        mail.send()
+        prefix_index = "FAILED"
+        context += [f"- [{prefix_index}] MARKET INDEX: ", report, ""]
+
+    try:
+        spec = MarketSpec(update=True)
+        if not PATH.SPEC.startswith('http'):
+            with open(PATH.SPEC, 'w') as f:
+                f.write(spec.to_json(orient='index').replace("nan", ""))
+        prefix_spec = "PARTIALLY FAILED" if "FAIL" in spec.log else "SUCCESS"
+        context += [f"- [{prefix_spec}] MARKET SPECIFICATION: ", spec.log, ""]
+    except Exception as report:
+        prefix_spec = 'FAILED'
+        context += [f"- [{prefix_spec}] MARKET SPECIFICATION: ", report, ""]
+
+    if "PARTIALLY FAILED" in [prefix_group, prefix_index, prefix_spec]:
+        prefix = "PARTIALLY FAILED"
+    elif "FAILED" in [prefix_group, prefix_index, prefix_spec]:
+        prefix = "FAILED"
+    else:
+        prefix = "SUCCESS"
+
+
+    mail.subject = f'[{prefix}] UPDATE BASELINE CACHE on {TODAY}'
+    mail.context = "\n".join(context)
+    mail.send()

@@ -73,7 +73,7 @@ if __name__ == "__main__":
         context += f'[Fail] BUILD Market-Map\n\tERROR: {error}\n\n'
 
 
-    minify.css(TESTMODE)
+    minify.css()
     minify.js()
 
     service = marketmap.render(
