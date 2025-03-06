@@ -63,10 +63,10 @@ class MarketState(DataFrame):
         fdef = [self.fetchMarketCap, self.fetchMultiples, self.fetchForeignRate]
         ks = concat([func(date, 'KOSPI') for func in fdef], axis=1)
         ks['market'] = 'kospi'
-        self.log = f'... Fetch KOSPI Market State :: {"Fail" if ks.empty else "Success"}'
+        self.log = f'... Fetch KOSPI Market State :: {"FAILED" if ks.empty else "SUCCESS"}'
         kq = concat([func(date, 'KOSDAQ') for func in fdef], axis=1)
         kq['market'] = 'kosdaq'
-        self.log = f'... Fetch KOSDAQ Market State :: {"Fail" if kq.empty else "Success"}'
+        self.log = f'... Fetch KOSDAQ Market State :: {"FAILED" if kq.empty else "SUCCESS"}'
         market = concat([ks, kq], axis=0)
 
         market = market[
@@ -77,7 +77,7 @@ class MarketState(DataFrame):
         market = market[market['marketCap'] >= market['marketCap'].median()]
 
         returns = self.fetchReturns(date, market.index)
-        self.log = f'... Fetch Returns :: {"Fail" if returns.empty else "Success"}'
+        self.log = f'... Fetch Returns :: {"FAILED" if returns.empty else "SUCCESS"}'
 
         merge = returns.join(market, how='left')
         merge = merge.sort_values(by='marketCap', ascending=False)

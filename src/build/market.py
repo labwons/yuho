@@ -5,7 +5,7 @@ CONTACT : snob.labwons@gmail.com
 ROUTINE : 15:40+09:00UTC on weekday
 """
 if __name__ == "__main__":
-    from pandas import set_option as DATAFRAME_PRINT
+    from pandas import set_option as PRINT_DATA
     try:
         from ..common.path import PATH
         from ..common.report import eMail
@@ -32,21 +32,25 @@ if __name__ == "__main__":
     from json import dumps
 
 
-    DATAFRAME_PRINT('display.expand_frame_repr', False)
+    PRINT_DATA('display.expand_frame_repr', False)
     LOCAL_HOST = False
 
 
     mail = eMail()
+    context = ["DETAILS"]
+
     try:
         baseline = MarketBaseline(update=True)
         if not PATH.BASE.startswith('http'):
             with open(PATH.BASE, 'w') as f:
                 f.write(baseline.to_json(orient='index').replace("nan", "null"))
-        context = f'[{"Warning" if baseline.log.count("Fail") else "Success"}] BUILD Baseline\n{baseline.log}\n\n'
+        prefix_baseline = "PARTIALLY FAILED" if baseline.log.count("FAIL") else "SUCCESS"
+        context += [f'[{prefix_baseline}] BUILD Baseline', baseline.log, '']
     except Exception as error:
         baseline = MarketBaseline(update=False)
-        context = f'[Fail] BUILD Baseline: Fail-Safe to use previous data\n\tERROR: {error}\n\n'
-    TRADING_DATE = f"{baseline['date'].values[0]} 종가 기준"
+        prefix_baseline = "FAILED"
+        context += [f'[{prefix_baseline}] BUILD Baseline', f'{error}', '']
+    TRADING_DATE = f"{baseline['date'].values[0]}"
 
 
     marketMap = MarketMap(baseline)
@@ -57,17 +61,15 @@ if __name__ == "__main__":
             mapT = Environment(loader=FileSystemLoader(PATH.HTML.TEMPLATES)) \
                    .get_template('marketmap.js')
             mapJs = mapT.render(
-                tradingDate=TRADING_DATE,
                 srcIndicatorOpt=dumps(marketMap.meta),
                 srcTicker=marketMap.to_json(orient='index'),
                 srcColors=marketMap.colors.to_json(orient='index')
             ).replace("nan", "null").replace("NaN", "null")
             with open(PATH.JS.MAP, 'w', encoding='utf-8') as file:
                 file.write(mapJs)
-        context += f'[Success] BUILD Market-Map\n{marketMap.log}\n\n'
+        context += [f'[SUCCESS] BUILD Market-Map', marketMap.log, '']
     except Exception as error:
-        context += f'[Fail] BUILD Market-Map\n\tERROR: {error}\n\n'
-
+        context += [f'[FAILED] BUILD Market-Map', f'{error}', '']
 
     minify.css()
     minify.js()
@@ -75,13 +77,22 @@ if __name__ == "__main__":
     service = marketmap.render(
         localhost=LOCAL_HOST,
         title="시장지도 MARKET MAP",
-        trading_date=TRADING_DATE
+        trading_date=f'{TRADING_DATE}\u0020\uc885\uac00\u0020\uae30\uc900'
     )
     with open(PATH.HTML.MAP, 'w', encoding='utf-8') as file:
         file.write(service)
 
-    mail.context = context
-    mail.subject = f'[{"SUCCESS" if not context.count("Fail") else "WARNING"}]BUILD BASELINE on {TODAY}'
-    print(mail.subject)
-    print(mail.context)
-    # mail.send()
+    mail.context = "\n".join(context)
+    if "PARTIALLY FAILED" in mail.context:
+        prefix = "PARTIALLY FAILED"
+    elif "FAILED" in mail.context:
+        prefix = "FAILED"
+    else:
+        prefix = "SUCCESS"
+    mail.subject = f'[{prefix}] BUILD BASELINE on {TRADING_DATE}'
+
+    if LOCAL_HOST:
+        print(mail.subject)
+        print(mail.context)
+    else:
+        mail.send()

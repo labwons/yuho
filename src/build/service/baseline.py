@@ -323,7 +323,7 @@ class MarketBaseline(DataFrame):
                 if not meta['round'] == -1:
                     merge[key] = round(merge[key], meta['round'])
         except Exception as report:
-            self.log = f" * Error while customizing data: {report}"
+            self.log = f" * [FAILED] Error while customizing data: {report}"
 
         super().__init__(merge)
         self.log = f'End [Build Market Baseline] {len(self)} Stocks / Elapsed: {time() - stime:.2f}s'

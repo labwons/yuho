@@ -19,8 +19,6 @@ if __name__ == "__main__":
         from src.fetch.market.spec import MarketSpec
     from datetime import datetime
 
-    TODAY = datetime.today().strftime("%Y-%m-%d")[2:]
-
     mail = eMail()
 
     context = ['DETAILS']
@@ -66,6 +64,6 @@ if __name__ == "__main__":
         prefix = "SUCCESS"
 
 
-    mail.subject = f'[{prefix}] UPDATE BASELINE CACHE on {TODAY}'
+    mail.subject = f'[{prefix}] UPDATE BASELINE CACHE on {datetime.today().strftime("%Y/%m/%d")}'
     mail.context = "\n".join(context)
     mail.send()
