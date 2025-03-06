@@ -293,11 +293,11 @@ class MarketBaseline(DataFrame):
     meta: Dict[str, Dict[str, Any]] = METADATA.copy()
     def __init__(self, update:bool=True):
         stime = time()
-        self.log = f'Begin [Build Market Baseline] @{datetime.today().strftime("%Y-%m-%d")[2:]}'
+        self.log = f'RUN [Build Market Baseline] @{datetime.today().strftime("%Y-%m-%d")[2:]}'
         if not update:
             super().__init__(read_json(PATH.BASE, orient='index'))
             self.index = self.index.astype(str).str.zfill(6)
-            self.log = f'End [Build Market Baseline] {len(self)} Stocks / Elapsed: {time() - stime:.2f}s'
+            self.log = f'END [Build Market Baseline] {len(self)} Stocks / Elapsed: {time() - stime:.2f}s'
             return
 
         spec = MarketSpec(update=False)
@@ -331,7 +331,7 @@ class MarketBaseline(DataFrame):
             self.log = f" * [FAILED] Error while customizing data: {report}"
 
         super().__init__(merge)
-        self.log = f'End [Build Market Baseline] {len(self)} Stocks / Elapsed: {time() - stime:.2f}s'
+        self.log = f'END [Build Market Baseline] {len(self)} Stocks / Elapsed: {time() - stime:.2f}s'
         return
 
     @property

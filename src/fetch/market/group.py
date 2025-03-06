@@ -72,7 +72,7 @@ class MarketGroup(DataFrame):
             return
 
         date = self.fetchTradingDate()
-        self.log = f'Begin [Market Group Fetch] @{date}'
+        self.log = f'RUN [Market Group Fetch] @{date}'
         objs, size = [], len(SECTOR_CODE) + 1
         for n, (code, name) in enumerate(SECTOR_CODE.items()):
             obj = self.fetchWiseGroup(code, date)
@@ -108,7 +108,7 @@ class MarketGroup(DataFrame):
         self.loc[sc_sw, 'industryCode'], self.loc[sc_sw, 'industryName'] = 'WI601', '소프트웨어'
         self.loc[sc_it, 'industryCode'], self.loc[sc_it, 'industryName'] = 'WI602', 'IT서비스'
 
-        self.log = f'End [Market Group Fetch] / Elapsed: {time() - stime:.2f}s'
+        self.log = f'END [Market Group Fetch] / Elapsed: {time() - stime:.2f}s'
         return
 
     @property

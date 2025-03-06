@@ -58,7 +58,7 @@ class MarketState(DataFrame):
             return
 
         date = get_nearest_business_day_in_a_week()
-        self.log = f'Begin [Market State Fetch] @{date}'
+        self.log = f'RUN [Market State Fetch] @{date}'
 
         fdef = [self.fetchMarketCap, self.fetchMultiples, self.fetchForeignRate]
         ks = concat([func(date, 'KOSPI') for func in fdef], axis=1)
@@ -84,7 +84,7 @@ class MarketState(DataFrame):
         merge["date"] = datetime.strptime(date, "%Y%m%d").strftime("%Y/%m/%d")
         super().__init__(merge)
 
-        self.log = f'End [Market State Fetch] / Elapsed: {time() - stime:.2f}s'
+        self.log = f'END [Market State Fetch] / Elapsed: {time() - stime:.2f}s'
         return
 
     @property

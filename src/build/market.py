@@ -47,15 +47,15 @@ if __name__ == "__main__":
             with open(PATH.BASE, 'w') as f:
                 f.write(baseline.to_json(orient='index').replace("nan", "null"))
         prefix_baseline = "PARTIALLY FAILED" if baseline.log.count("FAIL") else "SUCCESS"
-        context += [f'[{prefix_baseline}] BUILD Baseline', baseline.log, '']
+        context += [f'- [{prefix_baseline}] BUILD Baseline', baseline.log, '']
     except Exception as error:
         baseline = MarketBaseline(update=False)
         prefix_baseline = "FAILED"
-        context += [f'[{prefix_baseline}] BUILD Baseline', f'{error}', '']
+        context += [f'- [{prefix_baseline}] BUILD Baseline', f'  : {error}', '* Using latest baseline', '']
     TRADING_DATE = f"{datetime_as_string(baseline['date'].values[0], unit='D').replace('-', '/')}"
 
 
-    marketMap = MarketMap(baseline)
+    marketMap = MarketMap(baseline, TRADING_DATE)
     # TODO
     # metadata clear (불필요 key 값 삭제하기)
     try:
@@ -69,9 +69,9 @@ if __name__ == "__main__":
             ).replace("nan", "null").replace("NaN", "null")
             with open(PATH.JS.MAP, 'w', encoding='utf-8') as file:
                 file.write(mapJs)
-        context += [f'[SUCCESS] BUILD Market-Map', marketMap.log, '']
+        context += [f'- [SUCCESS] BUILD Market-Map', marketMap.log, '']
     except Exception as error:
-        context += [f'[FAILED] BUILD Market-Map', f'{error}', '']
+        context += [f'- [FAILED] BUILD Market-Map', f'{error}', '']
 
     minify.css()
     minify.js()

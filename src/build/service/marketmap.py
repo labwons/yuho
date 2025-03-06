@@ -194,9 +194,10 @@ class MarketMap(DataFrame):
 
     _log: List[str] = []
     meta: Dict[str, Dict[str, Any]] = _KEYS.copy()
-    def __init__(self, baseline:DataFrame):
+    def __init__(self, baseline:DataFrame, rundate:str=''):
         stime = time()
-        self.log = f'Begin [Build Market Map] @{datetime.today().strftime("%Y-%m-%d")[2:]}'
+        tdate = rundate if rundate else datetime.today().strftime("%Y/%m/%d")
+        self.log = f'RUN [Build Market Map] @{tdate}'
 
         super().__init__(baseline[baseline["stockSize"] == "large"])
 
@@ -242,7 +243,7 @@ class MarketMap(DataFrame):
         self._chunk()
         self._round_up()
 
-        self.log = f'End [Build Market Map] {len(self)} Items / Elapsed: {time() - stime:.2f}s'
+        self.log = f'END [Build Market Map] {len(self)} Items / Elapsed: {time() - stime:.2f}s'
         return
 
     def _check_metadata(self, baseline_meta:Dict[str, Dict[str, Any]]):
