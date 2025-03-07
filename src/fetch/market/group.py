@@ -130,24 +130,22 @@ class MarketGroup(DataFrame):
 
     @classmethod
     def fetchWiseGroup(cls, code:str, date:str="", countdown:int=5) -> DataFrame:
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
-        }
+        proxies = {"http": "http://117.55.202.206:3128"}
         resp = get(
             url=f'http://www.wiseindex.com/Index/GetIndexComponets?ceil_yn=0&dt={date}&sec_cd={code}',
-            headers=headers
+            proxies=proxies
         )
         if not resp.status_code == 200:
             cls._log.append(f'{" " * 8}RESPONSE STATUS: {resp.status_code}')
 
-        # try:
-        return DataFrame(resp.json()['list'])
-        # except JSONDecodeError:
-        #     if countdown == 0:
-        #         cls._log.append(f'{" " * 8}JSON FORMAT ERROR')
-        #         return DataFrame()
-        #     sleep(5)
-        #     return cls.fetchWiseGroup(code, date, countdown - 1)
+        try:
+            return DataFrame(resp.json()['list'])
+        except JSONDecodeError:
+            if countdown == 0:
+                cls._log.append(f'{" " * 8}JSON FORMAT ERROR')
+                return DataFrame()
+            sleep(5)
+            return cls.fetchWiseGroup(code, date, countdown - 1)
 
     @classmethod
     def fetchKosdaqList(cls, _tickers:Index=None) -> List[str]:
