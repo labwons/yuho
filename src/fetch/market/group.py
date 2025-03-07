@@ -1,18 +1,17 @@
+from datetime import datetime
 from pandas import (
     DataFrame,
     concat,
     Index,
     read_json,
-    Series
 )
 from pykrx.stock import get_index_portfolio_deposit_file
 from re import compile
 from requests import get
-from requests.exceptions import JSONDecodeError
+from requests.exceptions import JSONDecodeError, SSLError
 from time import sleep, time
 from typing import (
     Dict,
-    Iterable,
     List
 )
 if "PATH" not in globals():
@@ -75,10 +74,11 @@ class MarketGroup(DataFrame):
         self.log = f'RUN [Market Group Fetch] @{date}'
         objs, size = [], len(SECTOR_CODE) + 1
         for n, (code, name) in enumerate(SECTOR_CODE.items()):
+            self.log = f"... {str(n + 1).zfill(2)} / {size} : {code} {name} :: "
+            n_log = len(self._log) - 1
             obj = self.fetchWiseGroup(code, date)
             objs.append(obj)
-            proc = f"... {str(n + 1).zfill(2)} / {size} : {code} {name} :: "
-            self.log = f"{proc}Fail" if obj.empty else f"{proc}Success"
+            self._log[n_log] += ("FAILED" if obj.empty else "SUCCESS")
 
         reits = DataFrame(data={'CMP_KOR': REITS_CODE.values(), 'CMP_CD':REITS_CODE.keys()})
         reits[['SEC_CD', 'IDX_CD', 'SEC_NM_KOR', 'IDX_NM_KOR']] \
@@ -123,15 +123,28 @@ class MarketGroup(DataFrame):
     def fetchTradingDate(cls) -> str:
         URL = 'https://www.wiseindex.com/Index/Index#/G1010.0.Components'
         pattern = compile(r"var\s+dt\s*=\s*'(\d{8})'")
-        return pattern.search(get(URL).text).group(1)
+        try:
+            return pattern.search(get(URL).text).group(1)
+        except (JSONDecodeError, SSLError):
+            return datetime.today().strftime("%Y%m%d")
 
     @classmethod
     def fetchWiseGroup(cls, code:str, date:str="", countdown:int=5) -> DataFrame:
-        resp = get(f'http://www.wiseindex.com/Index/GetIndexComponets?ceil_yn=0&dt={date}&sec_cd={code}')
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+        }
+        resp = get(
+            url=f'http://www.wiseindex.com/Index/GetIndexComponets?ceil_yn=0&dt={date}&sec_cd={code}',
+            headers=headers
+        )
+        if not resp.status_code == 200:
+            cls._log.append(f'{" " * 8}RESPONSE STATUS: {resp.status_code}')
+
         try:
             return DataFrame(resp.json()['list'])
         except JSONDecodeError:
             if countdown == 0:
+                cls._log.append(f'{" " * 8}JSON FORMAT ERROR')
                 return DataFrame()
             sleep(5)
             return cls.fetchWiseGroup(code, date, countdown - 1)

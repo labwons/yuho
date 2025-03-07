@@ -52,7 +52,7 @@ if __name__ == "__main__":
 
         KST = timezone(timedelta(hours=9))
         clk = datetime.now(KST)
-        while clk.minute < 31:
+        while clk.hour == 3 and clk.minute < 31:
             sleep(30)
             clk = datetime.now(KST)
 
