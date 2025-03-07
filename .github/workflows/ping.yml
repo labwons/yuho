@@ -1,0 +1,11 @@
+name: PING TEST
+on:
+  workflow_dispatch:
+jobs:
+  test-network:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check network access
+        run: |
+          ping -c 4 www.wiseindex.com
+          curl -I https://www.wiseindex.com
