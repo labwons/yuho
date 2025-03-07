@@ -6,7 +6,6 @@ except ImportError:
     from src.fetch.market.state import MarketState
     from src.fetch.market.group import MarketGroup
     from src.fetch.market.spec import MarketSpec
-from datetime import datetime
 from numpy import nan
 from pandas import DataFrame, read_json
 from time import time
@@ -293,7 +292,7 @@ class MarketBaseline(DataFrame):
     meta: Dict[str, Dict[str, Any]] = METADATA.copy()
     def __init__(self, update:bool=True):
         stime = time()
-        self.log = f'RUN [Build Market Baseline] @{datetime.today().strftime("%Y-%m-%d")[2:]}'
+        self.log = f'RUN [Build Market Baseline]'
         if not update:
             super().__init__(read_json(PATH.BASE, orient='index'))
             self.index = self.index.astype(str).str.zfill(6)

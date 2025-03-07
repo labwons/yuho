@@ -76,7 +76,7 @@ if __name__ == "__main__":
         TRADING_DATE = f"{datetime_as_string(TRADING_DATE, unit='D').replace('-', '/')}"
 
 
-    marketMap = MarketMap(baseline, TRADING_DATE)
+    marketMap = MarketMap(baseline)
     # TODO
     # metadata clear (불필요 key 값 삭제하기)
     try:

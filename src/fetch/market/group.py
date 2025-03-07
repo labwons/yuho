@@ -140,14 +140,14 @@ class MarketGroup(DataFrame):
         if not resp.status_code == 200:
             cls._log.append(f'{" " * 8}RESPONSE STATUS: {resp.status_code}')
 
-        try:
-            return DataFrame(resp.json()['list'])
-        except JSONDecodeError:
-            if countdown == 0:
-                cls._log.append(f'{" " * 8}JSON FORMAT ERROR')
-                return DataFrame()
-            sleep(5)
-            return cls.fetchWiseGroup(code, date, countdown - 1)
+        # try:
+        return DataFrame(resp.json()['list'])
+        # except JSONDecodeError:
+        #     if countdown == 0:
+        #         cls._log.append(f'{" " * 8}JSON FORMAT ERROR')
+        #         return DataFrame()
+        #     sleep(5)
+        #     return cls.fetchWiseGroup(code, date, countdown - 1)
 
     @classmethod
     def fetchKosdaqList(cls, _tickers:Index=None) -> List[str]:

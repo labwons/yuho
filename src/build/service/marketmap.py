@@ -1,12 +1,10 @@
-from datetime import datetime
 from pandas import (
     concat,
     DataFrame,
-    Series
 )
 from scipy.stats import norm
 from time import time
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List
 
 
 HEX2RGB = lambda x: (int(x[1:3], 16), int(x[3:5], 16), int(x[5:], 16))
@@ -194,10 +192,9 @@ class MarketMap(DataFrame):
 
     _log: List[str] = []
     meta: Dict[str, Dict[str, Any]] = _KEYS.copy()
-    def __init__(self, baseline:DataFrame, rundate:str=''):
+    def __init__(self, baseline:DataFrame):
         stime = time()
-        tdate = rundate if rundate else datetime.today().strftime("%Y/%m/%d")
-        self.log = f'RUN [Build Market Map] @{tdate}'
+        self.log = f'RUN [Build Market Map]'
 
         super().__init__(baseline[baseline["stockSize"] == "large"])
 
