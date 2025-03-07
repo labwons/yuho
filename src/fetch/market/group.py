@@ -140,14 +140,13 @@ class MarketGroup(DataFrame):
 
         session = Session()
         session.headers.update(headers)
-        resp = get(
-            url=f'http://www.wiseindex.com/Index/GetIndexComponets?ceil_yn=0&dt={date}&sec_cd={code}',
-            # proxies=proxies
-        )
-        if not resp.status_code == 200:
-            cls._log.append(f'{" " * 8}RESPONSE STATUS: {resp.status_code}')
-
         try:
+            resp = get(
+                url=f'http://www.wiseindex.com/Index/GetIndexComponets?ceil_yn=0&dt={date}&sec_cd={code}',
+                # proxies=proxies
+            )
+            if not resp.status_code == 200:
+                cls._log.append(f'{" " * 8}RESPONSE STATUS: {resp.status_code}')
             return DataFrame(resp.json()['list'])
         except JSONDecodeError:
             if countdown == 0:
