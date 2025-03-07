@@ -7,5 +7,7 @@ jobs:
     steps:
       - name: Check network access
         run: |
-          ping -c 4 www.wiseindex.com
-          curl -I https://www.wiseindex.com
+          pint -c 4 http://cdn.fnguide.com
+          curl -I http://cdn.fnguide.com
+          # ping -c 4 www.wiseindex.com
+          # curl -I https://www.wiseindex.com
