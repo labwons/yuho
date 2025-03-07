@@ -7,7 +7,7 @@ from pandas import (
 )
 from pykrx.stock import get_index_portfolio_deposit_file
 from re import compile
-from requests import get
+from requests import get, Session
 from requests.exceptions import JSONDecodeError, SSLError
 from time import sleep, time
 from typing import (
@@ -130,10 +130,19 @@ class MarketGroup(DataFrame):
 
     @classmethod
     def fetchWiseGroup(cls, code:str, date:str="", countdown:int=5) -> DataFrame:
-        proxies = {"http": "http://117.55.202.206:3128"}
+        # print("Current IP:", get("https://ifconfig.me").text)
+        # proxies = {"http": "http://117.55.202.206:3128"}
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 Edg/133.0.0.0",
+            "Accept-Language": "ko,en;q=0.9,en-US;q=0.8",
+            "Referer": "http://www.wiseindex.com/"
+        }
+
+        session = Session()
+        session.headers.update(headers)
         resp = get(
             url=f'http://www.wiseindex.com/Index/GetIndexComponets?ceil_yn=0&dt={date}&sec_cd={code}',
-            proxies=proxies
+            # proxies=proxies
         )
         if not resp.status_code == 200:
             cls._log.append(f'{" " * 8}RESPONSE STATUS: {resp.status_code}')
@@ -166,3 +175,4 @@ if __name__ == "__main__":
     marketGroup = MarketGroup(True)
     # print(marketGroup)
     print(marketGroup.log)
+    # print("Current IP:", get("https://ifconfig.me"))
