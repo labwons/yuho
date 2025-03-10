@@ -82,7 +82,7 @@ if __name__ == "__main__":
     # TODO
     # metadata clear (불필요 key 값 삭제하기)
     try:
-        if not PATH.MAP.startswith('http'):
+        if not PATH.JS.MAP.startswith('http'):
             mapT = Environment(loader=FileSystemLoader(PATH.HTML.TEMPLATES)) \
                    .get_template('marketmap.js')
             mapJs = mapT.render(
