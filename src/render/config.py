@@ -8,30 +8,6 @@ import csscompressor, jsmin, os
 
 
 ROOT = '/yuho'
-# class minify:
-#
-#     @classmethod
-#     def css(cls):
-#         for _dir, _folder, _files in os.walk(PATH.DOCS):
-#             for _file in _files:
-#                 if _file.endswith('css') and not _file.endswith('.min.css'):
-#                     with open(os.path.join(_dir, _file), 'r', encoding='utf-8') as file:
-#                         src = file.read()
-#                     with open(os.path.join(_dir, _file.replace(".css", ".min.css")), "w", encoding='utf-8') as file:
-#                         file.write(csscompressor.compress(src))
-#         return
-#
-#     @classmethod
-#     def js(cls):
-#         for _dir, _folder, _files in os.walk(PATH.DOCS):
-#             for _file in _files:
-#                 if _file.endswith('js') and not _file.endswith('.min.js'):
-#                     with open(os.path.join(_dir, _file), 'r', encoding='utf-8') as file:
-#                         src = file.read()
-#                     with open(os.path.join(_dir, _file.replace(".js", ".min.js")), "w", encoding='utf-8') as file:
-#                         file.write(jsmin.jsmin(src))
-#         return
-
 
 class Resources:
 
@@ -76,7 +52,6 @@ class Resources:
             with open(js.replace(".js", ".min.js"), "w", encoding='utf-8') as file:
                 file.write(jsmin.jsmin(src))
         return
-
 
 
 class Kwargs:

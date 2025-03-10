@@ -36,13 +36,11 @@ def render(localhost:bool=False, **templateKeys):
                                 '\uc885\ubaa9\uc774\ub098\u0020\uc139\ud130\ub97c\u0020\ud074\ub9ad\u0028\ud0ed\u0029\ud558\uba74\u0020\ud655\ub300\u002f\uc7ac\ud3b8\ub429\ub2c8\ub2e4\u002e '
                                 '\uc7ac\ud3b8\ub41c\u0020\uc9c0\ub3c4\uc5d0\uc11c\u0020\uc0c1\ub2e8\u0020\ubd84\ub958\uba85\uc744\u0020\ud074\ub9ad\u0028\ud0ed\u0029\ud558\uba74\u0020\uc0c1\uc704\u0020\ubd84\ub958\u0020\uae30\uc900\uc73c\ub85c\u0020\uc7ac\ud3b8\uc774\u0020\ub429\ub2c8\ub2e4\u002e')
     kwargs['faq'] = [
-        {'q': 'Testing Question 1', 'a': 'Testing Answer 1'},
-        {'q': 'Testing Question 2', 'a': 'Testing Answer 2'},
-        {'q': 'Testing Question 3', 'a': 'Testing Answer 3'},
-        {'q': 'Testing Question 4', 'a': 'Testing Answer 4'},
-        {'q': 'Testing Question 5', 'a': 'Testing Answer 5'},
-        {'q': 'Testing Question 6', 'a': 'Testing Answer 6'},
-        {'q': 'Testing Question 7', 'a': 'Testing Answer 7'},
+        {'q': '실시간 업데이트는 안 되나요?', 'a': '안타깝지만 제공되지 않습니다.<i class="fa fa-frown-o"></i>'},
+        {'q': '제가 찾는 종목이 없어요.', 'a': '가독성을 위해 대형주는 코스피200 지수와 코스닥150 지수 종목으로 구성하였으며 이외 종목은 제외됩니다.'},
+        {'q': '언제 업데이트 되나요?', 'a': '정규장 시간 마감(15:30) 이후 15분~30분 내로 업데이트 됩니다. 휴장일에는 마지막 개장일 데이터가 유지됩니다.'},
+        {'q': '자료 출처가 어디인가요?', 'a': '섹터/업종 분류는 GICS 산업 분류 및 WISE INDEX를 참고하여 재구성하였습니다. 수익률은 한국거래소(KRX) 데이터를 참고하였으며 기타 지표는 네이버 및 에프앤가이드를 참고하였습니다.'},
+        {'q': '정보 수정이 필요해요.', 'a': '고장 신고, 정보 정정 및 기타 문의는 snob.labwons@gmail.com 으로 연락주세요!<i class="fa fa-smile-o"></i>'},
     ]
     return template.render(**kwargs.encode())
 

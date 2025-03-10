@@ -23,9 +23,6 @@ class PATH:
     STATE  = os.path.join(ROOT, r'src/fetch/market/json/state.json')
 
     DOCS   = os.path.join(ROOT, r'docs')
-    BUBBLE = os.path.join(ROOT, r'docs/src/json/bubble.json')
-    MAP    = os.path.join(ROOT, r'docs/src/json/treemap.json')
-    MACRO  = os.path.join(ROOT, r'docs/src/json/macro.json')
 
     # HTML = html(ROOT)
     HTML = Series()
