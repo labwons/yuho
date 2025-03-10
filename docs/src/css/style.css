@@ -649,7 +649,7 @@ h1, h2, h3, h4, h5, h6 {
 }
   
 .footer .footer-basis {
-    background: white url(/src/img/footer-bg.png) no-repeat right top;
+    background: white url(/yuho/src/img/footer-bg.png) no-repeat right top;
     background-size: contain;
     border-top: 1.5px solid lightgrey;
     border-bottom: 1.5px solid lightgrey;
