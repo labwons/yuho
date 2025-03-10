@@ -6,7 +6,8 @@ except ImportError:
     from src.fetch.market.state import MarketState
     from src.fetch.market.group import MarketGroup
     from src.fetch.market.spec import MarketSpec
-from numpy import nan
+from datetime import datetime
+from numpy import nan, datetime_as_string
 from pandas import DataFrame, read_json
 from time import time
 from typing import Any, Dict, List
@@ -293,8 +294,14 @@ class MarketBaseline(DataFrame):
     def __init__(self, update:bool=True):
         stime = time()
         self.log = f'RUN [Build Market Baseline]'
-        if not update:
-            super().__init__(read_json(PATH.BASE, orient='index'))
+
+        baseline = read_json(PATH.BASE, orient='index')
+        basedate = baseline['date'].values[0]
+        if not isinstance(basedate, str):
+            basedate = f"{datetime_as_string(basedate, unit='D')}"
+
+        if (not update) or basedate == datetime.today().strftime("%Y-%m-%d"):
+            super().__init__(baseline)
             self.index = self.index.astype(str).str.zfill(6)
             self.log = f'END [Build Market Baseline] {len(self)} Stocks / Elapsed: {time() - stime:.2f}s'
             return
@@ -347,8 +354,10 @@ if __name__ == "__main__":
 
     set_option('display.expand_frame_repr', False)
 
-    baseline = MarketBaseline(False)
+    baseline = MarketBaseline(True)
     print(baseline)
-    print(baseline.log)
+    # print(baseline.log)
     # print(baseline.columns)
     # print(baseline.loc[['005930', '005380']])
+
+
