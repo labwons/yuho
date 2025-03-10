@@ -291,12 +291,14 @@ $(document).ready(function(){
     $('.map-switch i').click(function(){
         VIEW_MODE = !VIEW_MODE;
         if (VIEW_MODE) {
-            setOption('.map-type', srcBarOpt, 1);
+            var _index = BARMODE ? 0 : 1;
+            setOption('.map-type', srcBarOpt, _index);
             setBar($('.map-option').val());
             $(this).removeClass('fa-signal').addClass('fa-map-o');
             $('.map-searchbar').prop('disabled', true);
         } else {
-            setOption('.map-type', srcMapOpt, 0);
+            var _index = SAMSUMG ? 0 : 1;
+            setOption('.map-type', srcMapOpt, _index);
             setMap($('.map-option').val());
             $(this).removeClass('fa-map-o').addClass('fa-signal');
             $('.map-searchbar').prop('disabled', false);

@@ -9,8 +9,9 @@ if __name__ == "__main__":
     try:
         from ..common.path import PATH
         from ..common.report import eMail
-        from ..render.config import minify
+        # from ..render.config import minify
         from ..render import (
+            config,
             bubble,
             macro,
             marketmap
@@ -20,8 +21,9 @@ if __name__ == "__main__":
     except ImportError:
         from src.common.path import PATH
         from src.common.report import eMail
-        from src.render.config import minify
+        # from src.render.config import minify
         from src.render import (
+            config,
             bubble,
             macro,
             marketmap
@@ -94,8 +96,9 @@ if __name__ == "__main__":
     except Exception as error:
         context += [f'- [FAILED] BUILD Market-Map', f'  : {error}', '']
 
-    minify.css()
-    minify.js()
+    resources = config.Resources(localhost=LOCAL_HOST)
+    resources.render_css()
+    resources.minify()
 
     service = marketmap.render(
         localhost=LOCAL_HOST,

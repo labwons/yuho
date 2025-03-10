@@ -2,33 +2,81 @@ try:
     from ..common.path import PATH
 except ImportError:
     from src.common.path import PATH
-from typing import Any, Dict, List, Union
+from jinja2 import Environment, FileSystemLoader
+from typing import Dict, List, Union
 import csscompressor, jsmin, os
 
 
-class minify:
+ROOT = '/yuho'
+# class minify:
+#
+#     @classmethod
+#     def css(cls):
+#         for _dir, _folder, _files in os.walk(PATH.DOCS):
+#             for _file in _files:
+#                 if _file.endswith('css') and not _file.endswith('.min.css'):
+#                     with open(os.path.join(_dir, _file), 'r', encoding='utf-8') as file:
+#                         src = file.read()
+#                     with open(os.path.join(_dir, _file.replace(".css", ".min.css")), "w", encoding='utf-8') as file:
+#                         file.write(csscompressor.compress(src))
+#         return
+#
+#     @classmethod
+#     def js(cls):
+#         for _dir, _folder, _files in os.walk(PATH.DOCS):
+#             for _file in _files:
+#                 if _file.endswith('js') and not _file.endswith('.min.js'):
+#                     with open(os.path.join(_dir, _file), 'r', encoding='utf-8') as file:
+#                         src = file.read()
+#                     with open(os.path.join(_dir, _file.replace(".js", ".min.js")), "w", encoding='utf-8') as file:
+#                         file.write(jsmin.jsmin(src))
+#         return
 
-    @classmethod
-    def css(cls):
-        for _dir, _folder, _files in os.walk(PATH.DOCS):
-            for _file in _files:
-                if _file.endswith('css') and not _file.endswith('.min.css'):
-                    with open(os.path.join(_dir, _file), 'r', encoding='utf-8') as file:
-                        src = file.read()
-                    with open(os.path.join(_dir, _file.replace(".css", ".min.css")), "w", encoding='utf-8') as file:
-                        file.write(csscompressor.compress(src))
-        return
 
-    @classmethod
-    def js(cls):
+class Resources:
+
+    def __init__(self, localhost:bool = False):
+        __src__ = {'css':[], 'js':[]}
         for _dir, _folder, _files in os.walk(PATH.DOCS):
             for _file in _files:
                 if _file.endswith('js') and not _file.endswith('.min.js'):
-                    with open(os.path.join(_dir, _file), 'r', encoding='utf-8') as file:
-                        src = file.read()
-                    with open(os.path.join(_dir, _file.replace(".js", ".min.js")), "w", encoding='utf-8') as file:
-                        file.write(jsmin.jsmin(src))
+                    __src__['js'].append(os.path.join(_dir, _file))
+                elif _file.endswith('css') and not _file.endswith('.min.css'):
+                    __src__['css'].append(os.path.join(_dir, _file))
+                else:
+                    continue
+        self.__src__ = __src__
+        self.__loc__ = localhost
         return
+
+    def render_css(self):
+        style = Environment(loader=FileSystemLoader(PATH.HTML.TEMPLATES)) \
+                .get_template('style.css') \
+                .render(root='' if self.__loc__ else ROOT)
+        with open(os.path.join(PATH.DOCS, "src/css/style.css"), "w", encoding="utf-8") as css:
+            css.write(style)
+
+        marketmap = Environment(loader=FileSystemLoader(PATH.HTML.TEMPLATES)) \
+                    .get_template('marketmap.css') \
+                    .render(root='' if self.__loc__ else ROOT)
+        with open(os.path.join(PATH.DOCS, "src/css/marketmap.css"), "w", encoding="utf-8") as css:
+            css.write(marketmap)
+        return
+
+    def minify(self):
+        for css in self.__src__['css']:
+            with open(css, 'r', encoding='utf-8') as file:
+                src = file.read()
+            with open(css.replace(".css", ".min.css"), "w", encoding='utf-8') as file:
+                file.write(csscompressor.compress(src))
+
+        for js in self.__src__['js']:
+            with open(js, 'r', encoding='utf-8') as file:
+                src = file.read()
+            with open(js.replace(".js", ".min.js"), "w", encoding='utf-8') as file:
+                file.write(jsmin.jsmin(src))
+        return
+
 
 
 class Kwargs:
@@ -37,7 +85,7 @@ class Kwargs:
     __NAV__: Dict[str, str] = {'bubble': '종목 분포', 'macro': '경제 지표', 'portfolio': '투자 종목'}
     def __init__(self, adsense:bool = False, localhost:bool = False):
         self._ad, self._lc = adsense, localhost
-        self.__root__ = root = '' if localhost else "/yuho"
+        self.__root__ = root = '' if localhost else ROOT
         self.__item__:Dict = {}
         self.__meta__:List[Dict] = [
             {"charset": "UTF-8"},

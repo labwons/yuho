@@ -304,7 +304,7 @@ class MarketMap(DataFrame):
                 "volume": group['volume'].sum(),
                 "amount": group['amount'].sum(),
                 "ceiling": 'TBD' if key.startswith('sector') else group.iloc[0]['sectorName'],
-                'meta': f'{value}<br>시가총액: ' + self._format_cap(size) + '원<br>'
+                'meta': f'{value}<br>시가총액: ' + self._format_cap(size) + '원'
             })
             '''
             Exception Grouping Factors:
