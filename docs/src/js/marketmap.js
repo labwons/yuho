@@ -297,7 +297,7 @@ $(document).ready(function(){
             $(this).removeClass('fa-signal').addClass('fa-map-o');
             $('.map-searchbar').prop('disabled', true);
         } else {
-            var _index = SAMSUMG ? 0 : 1;
+            var _index = SAMSUNG ? 0 : 1;
             setOption('.map-type', srcMapOpt, _index);
             setMap($('.map-option').val());
             $(this).removeClass('fa-map-o').addClass('fa-signal');
