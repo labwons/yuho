@@ -7,7 +7,7 @@ except ImportError:
 from jinja2 import Environment, FileSystemLoader
 
 
-def render(localhost:bool=False, **templateKeys):
+def html(localhost:bool=False, **templateKeys):
     template = Environment(loader=FileSystemLoader(PATH.HTML.TEMPLATES)) \
                .get_template('service_v2.html')
 
@@ -42,7 +42,21 @@ def render(localhost:bool=False, **templateKeys):
         {'q': '자료 출처가 어디인가요?', 'a': '섹터/업종 분류는 GICS 산업 분류 및 WISE INDEX를 참고하여 재구성하였습니다. 수익률은 한국거래소(KRX) 데이터를 참고하였으며 기타 지표는 네이버 및 에프앤가이드를 참고하였습니다.'},
         {'q': '정보 수정이 필요해요.', 'a': '고장 신고, 정보 정정 및 기타 문의는 snob.labwons@gmail.com 으로 연락주세요!<i class="fa fa-smile-o"></i>'},
     ]
-    return template.render(**kwargs.encode())
+
+    src = template.render(**kwargs.encode())
+    with open(PATH.HTML.MAP, 'w', encoding='utf-8') as file:
+        file.write(src)
+    return
+
+
+def javascript(localhost:bool=False, **templateKeys):
+    template = Environment(loader=FileSystemLoader(PATH.HTML.TEMPLATES)) \
+               .get_template('marketmap.js') \
+               .render(**templateKeys) \
+               .replace("nan", "null").replace("NaN", "null")
+    with open(PATH.JS.MAP, 'w', encoding='utf-8') as file:
+        file.write(template)
+    return
 
 
 if __name__ == "__main__":

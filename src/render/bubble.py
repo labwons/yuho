@@ -4,37 +4,30 @@ try:
 except ImportError:
     from src.common.path import PATH
     from src.render.config import Kwargs
-from datetime import datetime
 from jinja2 import Environment, FileSystemLoader
-from pykrx.stock import get_nearest_business_day_in_a_week
 
 
-
-def render(localhost:bool=False):
+def render(localhost:bool=False, **templateKeys):
     template = Environment(loader=FileSystemLoader(PATH.HTML.TEMPLATES)) \
                .get_template('service_v2.html')
 
-    date = f'{datetime.today().strftime("%Y/%m/%d")} 종가 기준'
-    try:
-        date = get_nearest_business_day_in_a_week()
-    except:
-        pass
-
     kwargs = Kwargs(adsense=False, localhost=localhost)
-    kwargs.link = {"rel": "stylesheet", "href": f"/src/css/marketmap.min.css"}
+    kwargs.link = {"rel": "stylesheet", "href": f"/src/css/bubble{'' if localhost else '.min'}.css"}
+    kwargs.script = {"type":"text/javascript", "src": f"/src/js/bubble{'' if localhost else '.min'}.js", "pos":"bottom"}
 
-    kwargs['title'] = 'TESTING'
-    kwargs['trading_date'] = date
+    for key, value in templateKeys.items():
+        kwargs[key] = value
+
     kwargs['service_opt_l'] = '''
-                        <select name="type" class="map-select map-type"></select>
-                        <select name="option" class="map-select map-option"></select>
-                        <div class="map-button map-reset"><i class="fa fa-refresh"></i></div>
-                        <div class="map-button map-switch"><i class="fa fa-signal"></i></div>
+                        <select name="x" class="bubble-select bubble-x"></select>
+                        <select name="y" class="bubble-select bubble-y"></select>
+                        <div class="bubble-button bubble-lock"><i class="fa fa-lock"></i></div>
+                        <div class="bubble-button bubble-sizing"><i class="fa fa-compress"></i></div>
                     '''
     kwargs['service_opt_r'] = '''
-                         <select class="map-select map-searchbar"><option></option></select>
+                        <select name="classifier" class="bubble-select bubble-classify"></select>
+                        <select name="tickers" class="bubble-select bubble-searchbar"><option></option></select>
                     '''
-    kwargs['app_icon'] = '<i class="map-rewind fa fa-undo"></i>'
     kwargs['service_items'] = f'''{'<span class="map-legend"></span>' * 7}'''
     kwargs['service_notice'] = ('\ubaa8\ub4e0\u0020\ud22c\uc790\uc758\u0020\ucc45\uc784\uc740\u0020\ub2f9\uc0ac\uc790\uc5d0\uac8c\u0020\uc788\uc2b5\ub2c8\ub2e4\u002e\u0020'
                                 '\u002a\ud45c\uc2dc\ub294\u0020\ucf54\uc2a4\ub2e5\u0020\uc885\ubaa9\uc785\ub2c8\ub2e4\u002e'
@@ -43,19 +36,13 @@ def render(localhost:bool=False):
                                 '\uc885\ubaa9\uc774\ub098\u0020\uc139\ud130\ub97c\u0020\ud074\ub9ad\u0028\ud0ed\u0029\ud558\uba74\u0020\ud655\ub300\u002f\uc7ac\ud3b8\ub429\ub2c8\ub2e4\u002e '
                                 '\uc7ac\ud3b8\ub41c\u0020\uc9c0\ub3c4\uc5d0\uc11c\u0020\uc0c1\ub2e8\u0020\ubd84\ub958\uba85\uc744\u0020\ud074\ub9ad\u0028\ud0ed\u0029\ud558\uba74\u0020\uc0c1\uc704\u0020\ubd84\ub958\u0020\uae30\uc900\uc73c\ub85c\u0020\uc7ac\ud3b8\uc774\u0020\ub429\ub2c8\ub2e4\u002e')
     kwargs['faq'] = [
-        {'q': 'Testing Question 1', 'a': 'Testing Answer 1'},
-        {'q': 'Testing Question 2', 'a': 'Testing Answer 2'},
-        {'q': 'Testing Question 3', 'a': 'Testing Answer 3'},
-        {'q': 'Testing Question 4', 'a': 'Testing Answer 4'},
-        {'q': 'Testing Question 5', 'a': 'Testing Answer 5'},
-        {'q': 'Testing Question 6', 'a': 'Testing Answer 6'},
-        {'q': 'Testing Question 7', 'a': 'Testing Answer 7'},
+        {'q': '실시간 업데이트는 안 되나요?', 'a': '안타깝지만 제공되지 않습니다.<i class="fa fa-frown-o"></i>'},
+        {'q': '제가 찾는 종목이 없어요.', 'a': '가독성을 위해 중위 시가총액(약 1천억원)보다 큰 종목들로만 구성되어 있으며 이외 종목은 제외하였습니다.'},
+        {'q': '언제 업데이트 되나요?', 'a': '정규장 시간 마감(15:30) 이후 15분~30분 내로 업데이트 됩니다. 휴장일에는 마지막 개장일 데이터가 유지됩니다.'},
+        {'q': '자료 출처가 어디인가요?', 'a': '섹터/업종 분류는 GICS 산업 분류 및 WISE INDEX를 참고하여 재구성하였습니다. 수익률은 한국거래소(KRX) 데이터를 참고하였으며 기타 지표는 네이버 및 에프앤가이드를 참고하였습니다.'},
+        {'q': '정보 수정이 필요해요.', 'a': '고장 신고, 정보 정정 및 기타 문의는 snob.labwons@gmail.com 으로 연락주세요!<i class="fa fa-smile-o"></i>'},
     ]
-
-    service = template.render(**kwargs.encode())
-    with open(PATH.HTML.BUBBLE, 'w', encoding='utf-8') as file:
-        file.write(service)
-    return
+    return template.render(**kwargs.encode())
 
 
 if __name__ == "__main__":

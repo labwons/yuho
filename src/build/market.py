@@ -9,7 +9,6 @@ if __name__ == "__main__":
     try:
         from ..common.path import PATH
         from ..common.report import eMail
-        # from ..render.config import minify
         from ..render import (
             config,
             bubble,
@@ -21,7 +20,6 @@ if __name__ == "__main__":
     except ImportError:
         from src.common.path import PATH
         from src.common.report import eMail
-        # from src.render.config import minify
         from src.render import (
             config,
             bubble,
@@ -37,7 +35,7 @@ if __name__ == "__main__":
     from time import sleep
     import os
 
-
+    KST = timezone(timedelta(hours=9))
     PRINT_DATA('display.expand_frame_repr', False)
     LOCAL_HOST = True if not os.getenv('LOCAL_HOST') else False
     # -------------------------------------------------------------------------------
@@ -52,12 +50,10 @@ if __name__ == "__main__":
         if get_nearest_business_day_in_a_week() != datetime.today().strftime("%Y%m%d"):
             raise SystemExit
 
-        KST = timezone(timedelta(hours=9))
         clk = datetime.now(KST)
         while clk.hour == 3 and clk.minute < 31:
             sleep(30)
             clk = datetime.now(KST)
-
 
     mail = eMail()
     context = ["DETAILS"]
@@ -77,36 +73,34 @@ if __name__ == "__main__":
     if not isinstance(TRADING_DATE, str):
         TRADING_DATE = f"{datetime_as_string(TRADING_DATE, unit='D').replace('-', '/')}"
 
-
     marketMap = MarketMap(baseline)
     # TODO
     # metadata clear (불필요 key 값 삭제하기)
     try:
-        if not PATH.JS.MAP.startswith('http'):
-            mapT = Environment(loader=FileSystemLoader(PATH.HTML.TEMPLATES)) \
-                   .get_template('marketmap.js')
-            mapJs = mapT.render(
-                srcIndicatorOpt=dumps(marketMap.meta),
-                srcTicker=marketMap.to_json(orient='index'),
-                srcColors=marketMap.colors.to_json(orient='index')
-            ).replace("nan", "null").replace("NaN", "null")
-            with open(PATH.JS.MAP, 'w', encoding='utf-8') as file:
-                file.write(mapJs)
-        context += [f'- [SUCCESS] BUILD Market-Map', marketMap.log, '']
+        marketmap.javascript(
+            srcIndicatorOpt=dumps(marketMap.meta),
+            srcTicker=marketMap.to_json(orient='index'),
+            srcColors=marketMap.colors.to_json(orient='index')
+        )
+
+        marketmap.html(
+            localhost=LOCAL_HOST,
+            title="\uc2dc\uc7a5\uc9c0\ub3c4 MARKET MAP",
+            trading_date=f'{TRADING_DATE}\u0020\uc885\uac00\u0020\uae30\uc900'
+        )
+        context += [f'- [SUCCESS] Deploy Market-Map', marketMap.log, '']
     except Exception as error:
-        context += [f'- [FAILED] BUILD Market-Map', f'  : {error}', '']
+        context += [f'- [FAILED] Deploy Market-Map', f'  : {error}', '']
 
-    resources = config.Resources(localhost=LOCAL_HOST)
-    resources.render_css()
-    resources.minify()
 
-    service = marketmap.render(
-        localhost=LOCAL_HOST,
-        title="\uc2dc\uc7a5\uc9c0\ub3c4 MARKET MAP",
-        trading_date=f'{TRADING_DATE}\u0020\uc885\uac00\u0020\uae30\uc900'
-    )
-    with open(PATH.HTML.MAP, 'w', encoding='utf-8') as file:
-        file.write(service)
+    try:
+        resources = config.Resources(localhost=LOCAL_HOST)
+        resources.render_css()
+        resources.minify()
+        context += [f'- [SUCCESS] CSS Deployment', '']
+    except Exception as error:
+        context += [f'- [FAILED] CSS Deployment', f'  : {error}', '']
+
 
     mail.context = "\n".join(context)
     if "PARTIALLY FAILED" in mail.context:
@@ -115,7 +109,7 @@ if __name__ == "__main__":
         prefix = "FAILED"
     else:
         prefix = "SUCCESS"
-    mail.subject = f'[{prefix}] BUILD BASELINE on {TRADING_DATE}'
+    mail.subject = f'[{prefix}] BUILD BASELINE on {TRADING_DATE} {datetime.now(KST).strftime("%H:%M")}'
 
     if LOCAL_HOST:
         print(mail.subject)

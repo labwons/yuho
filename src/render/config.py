@@ -32,6 +32,12 @@ class Resources:
         with open(os.path.join(PATH.DOCS, "src/css/style.css"), "w", encoding="utf-8") as css:
             css.write(style)
 
+        bubble = Environment(loader=FileSystemLoader(PATH.HTML.TEMPLATES)) \
+            .get_template('bubble.css') \
+            .render(root='' if self.__loc__ else ROOT)
+        with open(os.path.join(PATH.DOCS, "src/css/bubble.css"), "w", encoding="utf-8") as css:
+            css.write(bubble)
+
         marketmap = Environment(loader=FileSystemLoader(PATH.HTML.TEMPLATES)) \
                     .get_template('marketmap.css') \
                     .render(root='' if self.__loc__ else ROOT)
