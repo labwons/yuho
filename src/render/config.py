@@ -107,6 +107,7 @@ class Kwargs:
     def encode(self) -> Dict[str, Union[List, Dict, str]]:
         self.__item__.update({
             "ad_title": [],
+            "root": self.__root__,
             "meta": self.meta,
             "link": self.link,
             "script": self.script,
@@ -137,7 +138,7 @@ class Kwargs:
 
     @property
     def link(self) -> List[Dict]:
-        self.__link__.append({"rel": "icon", "href": f"/src/img/favicon.ico", "type": "image/x-icon"})
+        self.__link__.append({"rel": "icon", "href": f"{self.__root__}/src/img/favicon.ico", "type": "image/x-icon"})
         return self.__link__
 
     @link.setter

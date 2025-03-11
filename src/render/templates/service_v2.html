@@ -140,7 +140,7 @@
     </footer>
     {% for _script in script if _script["pos"] == "bottom" %}
     <script{% for key, value in _script.items() %} {% if key != "pos" %}{{ key }}="{{ value }}"{% endif %}{% endfor %}></script>{% endfor %}
-	<script type="text/javascript" src="/src/js/common.min.js"></script>
+	<script type="text/javascript" src="{{ root }}/src/js/common.min.js"></script>
     <script>
 		document.addEventListener("selectstart", function(e) {e.preventDefault();});
 		$(window).on('load', function(){(adsbygoogle = window.adsbygoogle || []).push({});})
