@@ -1,4 +1,4 @@
-.map-select {
+.bubble-select {
 	-webkit-appearance: none; /* 크롬, 사파리 */
     -moz-appearance: none;    /* 파이어폭스 */
     appearance: none;         /* 기본 */
@@ -21,7 +21,7 @@
     background-color: #fff;
 }
 
-.map-button {
+.bubble-button {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -37,16 +37,12 @@
     color: #444;
 }
 
-.map-button:hover {
+.bubble-button:hover {
 	color: #e63946;
 }
 
 .map-searchbar {
 	min-width: 360px;
-}
-
-.fa-signal {
-    transform: scaleX(-1) rotate(-90deg);
 }
 
 .map-rewind {
@@ -99,7 +95,7 @@
 
 /* MOBILE CASES */
 @media screen and (max-width: 767px) {
-	.map-select {
+	.bubble-select {
 		flex: 1 1 auto;
 		min-width: 0;
 		width: 120px;
