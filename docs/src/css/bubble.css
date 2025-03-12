@@ -14,7 +14,7 @@
     box-sizing: border-box;
     cursor: pointer;
     
-    background-image: url(/src/img/triangle_down.png);
+    background-image: url(/yuho/src/img/triangle_down.png);
     background-repeat: no-repeat;
     background-position: right 4px center;
     background-size: 8px;
