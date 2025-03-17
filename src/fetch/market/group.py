@@ -7,15 +7,13 @@ from pandas import (
 )
 from pykrx.stock import get_index_portfolio_deposit_file
 from re import compile
-from requests import get, Session
+from requests import get
 from requests.exceptions import JSONDecodeError, SSLError
 from time import sleep, time
 from typing import (
     Dict,
     List
 )
-from urllib3.exceptions import NewConnectionError
-
 if "PATH" not in globals():
     try:
         from ...common.path import PATH
@@ -57,8 +55,39 @@ REITS_CODE:Dict[str, str] = {
     "417310": "코람코더원리츠",
     "400760": "NH올원리츠",
     "350520": "이지스레지던스리츠",
+    "415640": "KB발해인프라",
 }
 
+EXCEPTIONALS = {
+    '950160': {
+        "name": "코오롱티슈진",
+        "industryCode": "WI410",
+        "industryName": "건강관리",
+        "sectorCode": "G35",
+        "sectorName": "건강관리"
+    },
+    '950210': {
+        'name': '프레스티지바이오파마',
+        "industryCode": "WI410",
+        "industryName": "건강관리",
+        "sectorCode": "G35",
+        "sectorName": "건강관리"
+    },
+    '009410': {
+        'name': '태영건설',
+        "industryCode": "WI220",
+        "industryName": "건설",
+        "sectorCode": "G20",
+        "sectorName": "산업재"
+    },
+    '052020': {
+        'name': '에스티큐브',
+        "industryCode": "WI410",
+        "industryName": "건강관리",
+        "sectorCode": "G35",
+        "sectorName": "건강관리"
+    }
+}
 
 class MarketGroup(DataFrame):
 
@@ -110,6 +139,12 @@ class MarketGroup(DataFrame):
         self.loc[sc_sw, 'industryCode'], self.loc[sc_sw, 'industryName'] = 'WI601', '소프트웨어'
         self.loc[sc_it, 'industryCode'], self.loc[sc_it, 'industryName'] = 'WI602', 'IT서비스'
 
+        data = {}
+        for key in EXCEPTIONALS:
+            if not key in self.index:
+                data[key] = EXCEPTIONALS[key]
+        exceptionals = DataFrame(data).T
+        super().__init__(concat(objs=[self, exceptionals], axis=0))
         self.log = f'END [Market Group Fetch] / Elapsed: {time() - stime:.2f}s'
         return
 
@@ -132,8 +167,6 @@ class MarketGroup(DataFrame):
 
     @classmethod
     def fetchWiseGroup(cls, code:str, date:str="", countdown:int=5) -> DataFrame:
-        # print("Current IP:", get("https://ifconfig.me").text)
-        # proxies = {"http": "http://117.55.202.206:3128"}
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 Edg/133.0.0.0",
             "Accept-Language": "ko,en;q=0.9,en-US;q=0.8",
@@ -174,6 +207,5 @@ class MarketGroup(DataFrame):
 
 if __name__ == "__main__":
     marketGroup = MarketGroup(True)
-    # print(marketGroup)
+    # # print(marketGroup)
     print(marketGroup.log)
-    # print("Current IP:", get("https://ifconfig.me"))

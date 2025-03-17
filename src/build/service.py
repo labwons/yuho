@@ -4,28 +4,28 @@ AUTHOR  : SNOB
 CONTACT : snob.labwons@gmail.com
 ROUTINE : 15:40+09:00UTC on weekday
 """
-from zmq import ROUTER
-
 if __name__ == "__main__":
     try:
         from ..common.path import PATH
         from ..common.report import eMail
         from ..render import (
             config,
-            # bubble,
+            bubble,
             marketmap
         )
         from .service.baseline import MarketBaseline
+        from .service.bubble import MarketBubble
         from .service.marketmap import MarketMap
     except ImportError:
         from src.common.path import PATH
         from src.common.report import eMail
         from src.render import (
             config,
-            # bubble,
+            bubble,
             marketmap
         )
         from src.build.service.baseline import MarketBaseline
+        from src.build.service.bubble import MarketBubble
         from src.build.service.marketmap import MarketMap
     from datetime import datetime, timezone, timedelta
     from json import dumps
@@ -164,8 +164,27 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------------------
     # BUILD BUBBLE
     # ---------------------------------------------------------------------------------------
-    # marketBubble =
+    marketBubble = MarketBubble(baseline)
+    try:
+        bubbleJsKeys = {
 
+        }
+
+        bubbleKeys = config.templateKeys()
+        bubbleKeys.merge(**bubble.defaultBubbleAttribute)
+        bubbleKeys["trading_date"] = f'{TRADING_DATE}\u0020\uc885\uac00\u0020\uae30\uc900'
+
+        if LOCAL_HOST:
+            bubbleKeys.fulltext()
+        if not LOCAL_HOST:
+            bubbleKeys.route(ROUTER)
+        if ADSENSE:
+            bubbleKeys.merge(**ADSENSE_PROPERTY)
+        index = bubble.html(**bubbleKeys).save(os.path.join(BASE_DIR, 'bubble'))
+
+        context += [f'- [SUCCESS] Deploy Market-Bubble', marketBubble.log, '']
+    except Exception as error:
+        context += [f'- [FAILED] Deploy Market-Bubble', f'  : {error}', '']
 
 
     # ---------------------------------------------------------------------------------------

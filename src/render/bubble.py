@@ -1,9 +1,9 @@
 try:
     from ..common.path import PATH
-    from .config import Kwargs
+    from .config import templateKeys
 except ImportError:
     from src.common.path import PATH
-    from src.render.config import Kwargs
+    from src.render.config import templateKeys
 from jinja2 import Environment, FileSystemLoader
 import os
 

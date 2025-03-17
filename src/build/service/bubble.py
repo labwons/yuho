@@ -32,14 +32,18 @@ class MarketBubble(DataFrame):
         self['meta'] = self['name'] + '(' + self.index + ')<br>' \
                      + '시가총액: ' + self['size'].apply(self._format_cap) + '원<br>' \
                      + '종가: ' + self['close'].apply(lambda x: f"{x:,d}원")
-        trade_stop = self[self[['D-1', 'W-1', 'M-1', 'M-3', 'M-6', 'Y-1']].sum(axis="columns") == 0]
-        self.drop(inplace=True, index=trade_stop.index)
+        abnormal = self[
+            (self[['D-1', 'W-1', 'M-1', 'M-3', 'M-6', 'Y-1']].sum(axis="columns") == 0) |
+            (self['volume'] == 0) |
+            (self['name'].isna())
+        ]
+        self.drop(inplace=True, index=abnormal.index)
 
-        print(self[self['sectorCode'].isna()])
         self['color'] = self['sectorCode'].apply(lambda x: colors[x])
 
         self.drop(inplace=True, columns=[
-            "close", "industryCode", "industryName", "sectorCode", "sectorName", "stockSize",
+            "close", "marketCap", "amount", "market", "date", "name",
+            "industryCode", "industryName", "sectorCode", "sectorName", "stockSize",
         ])
 
         self._round_up()
