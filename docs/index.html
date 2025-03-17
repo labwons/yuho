@@ -6,11 +6,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     
+    <link rel="icon" href="/yuho/src/img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="/yuho/src/css/select2.min.css">
     <link rel="stylesheet" href="/yuho/src/css/style.min.css">
     <link rel="stylesheet" href="/yuho/src/css/marketmap.min.css">
-    <link rel="icon" href="/yuho/src/img/favicon.ico" type="image/x-icon">
     	
     <script src="/yuho/src/js/jquery-3.6.1.min.js" ></script>	
     <script src="/yuho/src/js/plotly-2.35.2-r0.1.min.js" ></script>	
@@ -34,7 +34,7 @@
 		<section class="service-title">
 			<div class="title">
 				<h1 class="title-name">시장지도 MARKET MAP</h1>
-				<span class="title-date">2025/03/14 종가 기준</span>
+				<span class="title-date">2025/03/17 종가 기준</span>
 			</div>
 			<div class="ads ad-title-h">
 				<ins ></ins>
@@ -45,14 +45,14 @@
             <div class="service">
                 <div class="service-nav">
                     <div class="service-opt-l">
-                        <select name="type" class="map-select map-type"></select>
-                        <select name="option" class="map-select map-option"></select>
-                        <div class="map-button map-reset"><i class="fa fa-refresh"></i></div>
-                        <div class="map-button map-switch"><i class="fa fa-signal"></i></div>
-                    </div>
+						<select name="type" class="map-select map-type"></select>
+						<select name="option" class="map-select map-option"></select>
+						<div class="map-button map-reset"><i class="fa fa-refresh"></i></div>
+						<div class="map-button map-switch"><i class="fa fa-signal"></i></div>
+					</div>
                     <div class="service-opt-r">
-                         <select class="map-select map-searchbar"><option></option></select>
-                    </div>
+						<select class="map-select map-searchbar"><option></option></select>
+					</div>
                 </div>
                 <div class="service-app">
                     <div class="plot" id="plotly"><i class="map-rewind fa fa-undo"></i></div>
@@ -190,8 +190,8 @@
       </div>
     </footer>
     
-    <script type="text/javascript" src="/yuho/src/js/marketmap.min.js" ></script>
-	<script type="text/javascript" src="/yuho/src/js/common.min.js"></script>
+    <script src="/yuho/src/js/common.min.js" ></script>
+    <script src="/yuho/src/js/marketmap.min.js" ></script>
     <script>
 		document.addEventListener("selectstart", function(e) {e.preventDefault();});
 		$(window).on('load', function(){(adsbygoogle = window.adsbygoogle || []).push({});})

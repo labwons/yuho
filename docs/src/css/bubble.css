@@ -41,46 +41,8 @@
 	color: #e63946;
 }
 
-.map-searchbar {
+.bubble-searchbar {
 	min-width: 360px;
-}
-
-.map-rewind {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    top: 6px;
-    left: 6px;
-    width: 24px;
-    height: 24px;
-    margin: 0;
-    border: 1px solid #fff;
-    border-radius: 6px;
-    color: #fff;
-    cursor: pointer;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 1.0s ease, visibility 1.0s ease;
-}
-
-.map-rewind.show {
-    opacity: 1;
-    visibility: visible;
-}
-
-.map-legend {
-    flex: 0 0 auto;
-	min-width: 80px;
-	max-height: 28px;
-	box-sizing: border-box;
-	display: flex;
-	flex-wrap: nowrap;
-	align-items: center;
-	justify-content: center;
-	font-size: 14px;
-	font-weight: 700;
-	color: white;
 }
 
 /* LAPTOP CASES */
@@ -105,25 +67,11 @@
 		overflow: hidden;
 	}	
 	
-	.map-button {
+	.bubble-button {
 		flex: 0 0 28px;
 	}
 	
-	.map-searchbar {
+	.bubble-searchbar {
 		width: auto !important;
 	}
-	
-	.map-legend {
-		flex: 1 0 auto;
-		min-width: 40px;
-		max-height: 20px;
-		box-sizing: border-box;
-		display: flex;
-		flex-wrap: nowrap;
-		align-items: center;
-		justify-content: center;
-		font-size: 12px;
-		font-weight: 700;
-		color: white;
-	}	
 }

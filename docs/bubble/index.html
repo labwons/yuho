@@ -5,24 +5,25 @@
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="google-adsense-account" content="ca-pub-7507574593260609">
     
+    <link rel="icon" href="/yuho/src/img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/src/css/select2.min.css">
-    <link rel="stylesheet" href="/src/css/style.min.css">
-	<link rel="icon" href="/src/img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/yuho/src/css/select2.min.css">
+    <link rel="stylesheet" href="/yuho/src/css/style.min.css">
+    <link rel="stylesheet" href="/yuho/src/css/bubble.min.css">
     	
-    <script src="/src/js/jquery-3.6.1.min.js"></script>	
-    <script src="/src/js/plotly-2.35.2-r0.1.min.js"></script>	
-    <script src="/src/js/select2.min.js"></script>	
-    <script data-ad-client="ca-pub-7507574593260609" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script src="/yuho/src/js/jquery-3.6.1.min.js" ></script>	
+    <script src="/yuho/src/js/plotly-2.35.2-r0.1.min.js" ></script>	
+    <script src="/yuho/src/js/select2.min.js" ></script>
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-KJFQ72Z8');</script>
 </head>
 <body>
     <header id="header" class="header header-fix">
-        <a href="/" class="logo"><img src="" alt="LAB￦ONS"></a>
+        <a href="/" class="logo"><img src="/yuho/src/img/logo-text.png" alt="LAB￦ONS"></a>
         <nav id="navbar" class="navbar">
             <ul>
+                <li><a href="/yuho/">시장 지도</a></li>
+                <li><a href="/yuho/bubble">종목 분포</a></li>
             </ul>
             <i class="fa fa-bars navbar-button"></i>
         </nav>
@@ -32,19 +33,27 @@
 		
 		<section class="service-title">
 			<div class="title">
-				<h1 class="title-name">BUBBLE</h1>
-				<span class="title-date">2025/02/20</span>
+				<h1 class="title-name">종목 분포 BUBBLES</h1>
+				<span class="title-date">2025/03/17 종가 기준</span>
 			</div>
 			<div class="ads ad-title-h">
-				<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7507574593260609" data-ad-slot="9705057757" data-ad-format="auto" data-full-width-responsive="true" ></ins>
+				<ins ></ins>
 			</div>
 		</section>
 		
         <section class="service-section">
             <div class="service">
                 <div class="service-nav">
-                    <div class="service-opt-l"></div>
-                    <div class="service-opt-r"></div>
+                    <div class="service-opt-l">
+						<select name="x" class="bubble-select bubble-x"></select>
+						<select name="y" class="bubble-select bubble-y"></select>
+						<div class="bubble-button bubble-edit"><i class="fa fa-edit"></i></div>
+						<div class="bubble-button bubble-sizing"><i class="fa fa-compress"></i></div>
+					</div>
+                    <div class="service-opt-r">
+						<select name="classifier" class="bubble-select bubble-classify"></select>
+						<select name="tickers" class="bubble-select bubble-searchbar"><option></option></select>
+					</div>
                 </div>
                 <div class="service-app">
                     <div class="plot" id="plotly"></div>
@@ -68,44 +77,33 @@
 				<div class="faq-column">
 					<div class="faq-item">
 						<div class="faq-question faq-question-1">
-							<span>Testing Question 1</span>
+							<span>실시간 업데이트는 안 되나요?</span>
 							<i class="fa fa-chevron-down"></i>
 						</div>
 						<div class="faq-content faq-content-1 collapse">
-							Testing Answer 1
+							안타깝지만 제공되지 않습니다.<i class="fa fa-frown-o"></i>
 						</div>
 					</div>
 					
 					<div class="faq-item">
 						<div class="faq-question faq-question-2">
-							<span>Testing Question 2</span>
+							<span>제가 찾는 종목이 없어요.</span>
 							<i class="fa fa-chevron-down"></i>
 						</div>
 						<div class="faq-content faq-content-2 collapse">
-							Testing Answer 2
+							가독성을 위해 대형주는 코스피200 지수와 코스닥150 지수 종목으로 구성하였으며 이외 종목은 제외됩니다.
 						</div>
 					</div>
 					
 					<div class="faq-item">
 						<div class="faq-question faq-question-3">
-							<span>Testing Question 3</span>
+							<span>언제 업데이트 되나요?</span>
 							<i class="fa fa-chevron-down"></i>
 						</div>
 						<div class="faq-content faq-content-3 collapse">
-							Testing Answer 3
+							정규장 시간 마감(15:30) 이후 15분~30분 내로 업데이트 됩니다. 휴장일에는 마지막 개장일 데이터가 유지됩니다.
 						</div>
 					</div>
-					
-					<div class="faq-item">
-						<div class="faq-question faq-question-4">
-							<span>Testing Question 4</span>
-							<i class="fa fa-chevron-down"></i>
-						</div>
-						<div class="faq-content faq-content-4 collapse">
-							Testing Answer 4
-						</div>
-					</div>
-					
 					
 					
 					
@@ -116,34 +114,23 @@
 					
 					
 					
+					<div class="faq-item">
+						<div class="faq-question faq-question-4">
+							<span>자료 출처가 어디인가요?</span>
+							<i class="fa fa-chevron-down"></i>
+						</div>
+						<div class="faq-content faq-content-4 collapse">
+							섹터/업종 분류는 GICS 산업 분류 및 WISE INDEX를 참고하여 재구성하였습니다. 수익률은 한국거래소(KRX) 데이터를 참고하였으며 기타 지표는 네이버 및 에프앤가이드를 참고하였습니다.
+						</div>
+					</div>
 					
 					<div class="faq-item">
 						<div class="faq-question faq-question-5">
-							<span>Testing Question 5</span>
+							<span>정보 수정이 필요해요.</span>
 							<i class="fa fa-chevron-down"></i>
 						</div>
 						<div class="faq-content faq-content-5 collapse">
-							Testing Answer 5
-						</div>
-					</div>
-					
-					<div class="faq-item">
-						<div class="faq-question faq-question-6">
-							<span>Testing Question 6</span>
-							<i class="fa fa-chevron-down"></i>
-						</div>
-						<div class="faq-content faq-content-6 collapse">
-							Testing Answer 6
-						</div>
-					</div>
-					
-					<div class="faq-item">
-						<div class="faq-question faq-question-7">
-							<span>Testing Question 7</span>
-							<i class="fa fa-chevron-down"></i>
-						</div>
-						<div class="faq-content faq-content-7 collapse">
-							Testing Answer 7
+							고장 신고, 정보 정정 및 기타 문의는 snob.labwons@gmail.com 으로 연락주세요!<i class="fa fa-smile-o"></i>
 						</div>
 					</div>
 					
@@ -160,7 +147,7 @@
         <div class="footer-container">
           <div class="footer-info">
             <a href="/" class="logo">
-              <img src="//src/img/logo-footer.png" alt="LAB￦ONS">
+              <img src="/yuho/src/img/logo-footer.png" alt="LAB￦ONS">
             </a>
             <p>본 홈페이지는 <b>개인 블로그</b>이며 여기서 취득한 어떤 정보도 법적인 효력을 갖지 못합니다. 모든 투자의 책임은 당사자에게 있습니다. 참고한 정보의 출처는 신뢰할 만하나, 열람 시점이나 제공처의 사정 따라 정보의 정확성이 달라질 수 있습니다.</p>
           </div>
@@ -180,6 +167,8 @@
             <div class="footer-link">
               <h4>서비스 바로가기</h4>
               <ul>
+                <li><i class="fa fa-chevron-right"></i><a href="/yuho/">시장 지도</a></li>
+                <li><i class="fa fa-chevron-right"></i><a href="/yuho/bubble">종목 분포</a></li>
             </ul>
             </div>
           </div>
@@ -197,12 +186,13 @@
           &copy; Copyright LAB<strong>￦</strong>ONS. All Rights Reserved
         </div>
         <div class="credits">
-          Designed By. YUHO DAD
+          Designed By. YUHO PAPA
         </div>
       </div>
     </footer>
-	<script type="text/javascript" src="/src/js/common.min.js"></script>
     
+    <script src="/yuho/src/js/common.min.js" ></script>
+    <script src="/yuho/src/js/bubble.min.js" ></script>
     <script>
 		document.addEventListener("selectstart", function(e) {e.preventDefault();});
 		$(window).on('load', function(){(adsbygoogle = window.adsbygoogle || []).push({});})
