@@ -36,7 +36,7 @@ jobs:
       run: |
         export PYTHONPATH=$PYTHONPATH:$(pwd)/src
         export LOCAL_HOST=True
-        python src/build/market.py
+        python src/build/service.py
 
     - name: Commit and Push changes
       env:

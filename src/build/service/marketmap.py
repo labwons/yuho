@@ -28,7 +28,7 @@ RED2GREEN = [
     '#2F9E4F', # R47 G158 B79
     '#30CC5A'  # R48 G204 B90
 ]
-_KEYS = {
+KEYS = {
     'D-1': {
         'na': '(미제공)',
         'valueScale': [-3, -2, -1, 0, 1, 2, 3],
@@ -191,7 +191,7 @@ _KEYS = {
 class MarketMap(DataFrame):
 
     _log: List[str] = []
-    meta: Dict[str, Dict[str, Any]] = _KEYS.copy()
+    meta: Dict[str, Dict[str, Any]] = KEYS.copy()
     def __init__(self, baseline:DataFrame):
         stime = time()
         self.log = f'RUN [Build Market Map]'

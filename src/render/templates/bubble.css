@@ -1,4 +1,4 @@
-.bubble-select {
+.map-select {
 	-webkit-appearance: none; /* 크롬, 사파리 */
     -moz-appearance: none;    /* 파이어폭스 */
     appearance: none;         /* 기본 */
@@ -14,14 +14,14 @@
     box-sizing: border-box;
     cursor: pointer;
     
-    background-image: url({{ root }}/src/img/triangle_down.png);
+    background-image: url({{ router }}/src/img/triangle_down.png);
     background-repeat: no-repeat;
     background-position: right 4px center;
     background-size: 8px;
     background-color: #fff;
 }
 
-.bubble-button {
+.map-button {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -37,12 +37,16 @@
     color: #444;
 }
 
-.bubble-button:hover {
+.map-button:hover {
 	color: #e63946;
 }
 
 .map-searchbar {
 	min-width: 360px;
+}
+
+.fa-signal {
+    transform: scaleX(-1) rotate(-90deg);
 }
 
 .map-rewind {
@@ -95,7 +99,7 @@
 
 /* MOBILE CASES */
 @media screen and (max-width: 767px) {
-	.bubble-select {
+	.map-select {
 		flex: 1 1 auto;
 		min-width: 0;
 		width: 120px;

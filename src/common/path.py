@@ -1,5 +1,5 @@
 from pandas import Series
-import os
+import os, shutil
 
 
 class PATH:
@@ -33,6 +33,23 @@ class PATH:
 
     JS = Series()
     JS.MAP = os.path.join(ROOT, r'docs/src/js/marketmap.js')
+
+    @classmethod
+    def copy(cls, src:str, dst:str, rename:str=""):
+        if not os.path.exists(src):
+            raise FileNotFoundError(f"원본 파일이 존재하지 않습니다: {src}")
+
+        ext = f".{src.split('.')[-1]}"
+        new = os.path.basename(src) if not rename else f"{rename}{ext}"
+        dst = os.path.join(dst, new)
+        if not os.path.isfile(dst):
+            shutil.copy2(src=src, dst=dst)
+        return dst
+
+    @classmethod
+    def copytree(cls, src:str, dst:str):
+        shutil.copytree(src, dst, dirs_exist_ok=True)
+        return
 
 
 

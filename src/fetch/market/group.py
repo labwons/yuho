@@ -14,7 +14,8 @@ from typing import (
     Dict,
     List
 )
-from urllib3.connection import HTTPSConnection
+from urllib3.exceptions import NewConnectionError
+
 if "PATH" not in globals():
     try:
         from ...common.path import PATH
@@ -149,7 +150,7 @@ class MarketGroup(DataFrame):
             if not resp.status_code == 200:
                 cls._log.append(f'{" " * 8}RESPONSE STATUS: {resp.status_code}')
             return DataFrame(resp.json()['list'])
-        except (ConnectionError, HTTPSConnection, JSONDecodeError):
+        except (ConnectionError, JSONDecodeError, NewConnectionError):
             if countdown == 0:
                 cls._log.append(f'{" " * 8}JSON FORMAT ERROR')
                 return DataFrame()
