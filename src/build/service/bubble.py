@@ -21,6 +21,7 @@ class MarketBubble(DataFrame):
 
     _log: List[str] = []
     meta: Dict[str, Dict[str, Any]] = {}
+    sector: Dict[str, Dict[str, str]] = {"ALL": {"label": "전체", "color": "royalblue"}}
     def __init__(self, baseline:DataFrame):
         normalize = lambda x, mn, mx: mn + (x - x.min()) * (mx - mn) / (x.max() - x.min())
         stime = time()
@@ -37,14 +38,23 @@ class MarketBubble(DataFrame):
             (self['volume'] == 0) |
             (self['name'].isna())
         ]
+
+        for code, name in self[["sectorCode", "sectorName"]].drop_duplicates().dropna().itertuples(index=False):
+            self.sector[code] = {'label': name, 'color': colors[code]}
+
         self.drop(inplace=True, index=abnormal.index)
-
-        self['color'] = self['sectorCode'].apply(lambda x: colors[x])
-
         self.drop(inplace=True, columns=[
-            "close", "marketCap", "amount", "market", "date", "name",
-            "industryCode", "industryName", "sectorCode", "sectorName", "stockSize",
+            "close", "marketCap", "amount", "market", "date",
+            "industryCode", "industryName", "sectorName", "stockSize",
         ])
+
+        meta = {}
+        for col in self.meta:
+            if col in self:
+                meta[col] = self.meta[col]
+                if not self.meta[col]['round'] == -1:
+                    meta[col]['mean'] = round(self[col].mean(), 2)
+        self.meta = meta
 
         self._round_up()
 
@@ -96,3 +106,5 @@ if __name__ == "__main__":
     # print(baseline)
     marketBubble = MarketBubble(baseline)
     print(marketBubble)
+    print(marketBubble.meta)
+    print(marketBubble.sector)

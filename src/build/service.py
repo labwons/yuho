@@ -35,26 +35,27 @@ if __name__ == "__main__":
     from time import sleep
     import os
 
+
     # ---------------------------------------------------------------------------------------
     # GOOGLE ADSENSE CONFIGURATION
     # ---------------------------------------------------------------------------------------
-    ADSENSE_ID: str = "ca-pub-7507574593260609"
     ADSENSE_PROPERTY = {
-        "meta": [{"name": "google-adsense-account", "content": ADSENSE_ID}],
+        "meta": [{"name": "google-adsense-account", "content": config.ADSENSE_ID}],
         "script": [{
-            "data-ad-client": ADSENSE_ID,
+            "data-ad-client": config.ADSENSE_ID,
             "async src": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",
             "pos": "top"
         }],
         "ad_title": [{
             "class": "adsbygoogle",
             "style": "display:block",
-            "data-ad-client": ADSENSE_ID,
+            "data-ad-client": config.ADSENSE_ID,
             "data-ad-slot": "9705057757",
             "data-ad-format": "auto",
             "data-full-width-responsive": "true",
         }]
     }
+
 
     # ---------------------------------------------------------------------------------------
     # ENVIRONMENT SETTINGS
@@ -90,6 +91,7 @@ if __name__ == "__main__":
             sleep(30)
             now = CLOCK(LOCAL_ZONE)
 
+
     # ---------------------------------------------------------------------------------------
     # UPDATE BASELINE
     # ---------------------------------------------------------------------------------------
@@ -111,6 +113,70 @@ if __name__ == "__main__":
     if not isinstance(TRADING_DATE, str):
         TRADING_DATE = f"{datetime_as_string(TRADING_DATE, unit='D').replace('-', '/')}"
 
+
+    # ---------------------------------------------------------------------------------------
+    # BUILD MARKET MAP
+    # ---------------------------------------------------------------------------------------
+    marketMap = MarketMap(baseline)
+    # TODO
+    # metadata clear (불필요 key 값 삭제하기)
+    try:
+        mapJsKeys = {
+            "srcIndicatorOpt" : dumps(marketMap.meta),
+            "srcTicker" : marketMap.to_json(orient='index'),
+            "srcColors" : marketMap.colors.to_json(orient='index')
+        }
+        marketmap.javascript(**mapJsKeys).save(os.path.join(BASE_DIR, r'src/js/'))
+
+        mapKeys = config.templateKeys()
+        mapKeys.merge(**marketmap.defaultMarketMapAttribute)
+        mapKeys["trading_date"] = f'{TRADING_DATE}\u0020\uc885\uac00\u0020\uae30\uc900'
+
+        if LOCAL_HOST:
+            # IF YOU ARE DEBUGGING IN LOCAL HOST, MINIFIED RESOURCES IS NOT USED AND WILL BE EXPANDED TO
+            # FULL TEXT RESOURCES. THE FULL TEXTED RESOURCES ARE ONLY AFFECT TO THE DEBUGGING ENVIRONMENT,
+            # IF YOU WANT TO CHANGE THE SOURCE, YOU NEED TO CHANGE THE TEMPLATE.
+            mapKeys.fulltext()
+        if not LOCAL_HOST:
+            mapKeys.route(ROUTER)
+        if ADSENSE:
+            mapKeys.merge(**ADSENSE_PROPERTY)
+        marketmap.html(**mapKeys).save(BASE_DIR)
+
+        context += [f'- [SUCCESS] Deploy Market-Map', marketMap.log, '']
+    except Exception as error:
+        context += [f'- [FAILED] Deploy Market-Map', f'  : {error}', '']
+
+
+    # ---------------------------------------------------------------------------------------
+    # BUILD BUBBLE
+    # ---------------------------------------------------------------------------------------
+    marketBubble = MarketBubble(baseline)
+    try:
+        bubbleJsKeys = {
+            "srcIndicatorOpt": dumps(marketBubble.meta),
+            "srcTickers": marketBubble.to_json(orient='index'),
+            "srcSectors": dumps(marketBubble.sector)
+        }
+        bubble.javascript(**bubbleJsKeys).save(os.path.join(BASE_DIR, r'src/js/'))
+
+        bubbleKeys = config.templateKeys()
+        bubbleKeys.merge(**bubble.defaultBubbleAttribute)
+        bubbleKeys["trading_date"] = f'{TRADING_DATE}\u0020\uc885\uac00\u0020\uae30\uc900'
+
+        if LOCAL_HOST:
+            bubbleKeys.fulltext()
+        if not LOCAL_HOST:
+            bubbleKeys.route(ROUTER)
+        if ADSENSE:
+            bubbleKeys.merge(**ADSENSE_PROPERTY)
+        bubble.html(**bubbleKeys).save(os.path.join(BASE_DIR, 'bubble'))
+
+        context += [f'- [SUCCESS] Deploy Market-Bubble', marketBubble.log, '']
+    except Exception as error:
+        context += [f'- [FAILED] Deploy Market-Bubble', f'  : {error}', '']
+
+
     # ---------------------------------------------------------------------------------------
     # BUILD RESOURCES
     # ---------------------------------------------------------------------------------------
@@ -126,66 +192,6 @@ if __name__ == "__main__":
     except Exception as error:
         context += [f'- [FAILED] CSS Deployment and Minify Resources', f'  : {error}', '']
 
-    # ---------------------------------------------------------------------------------------
-    # BUILD MARKET MAP
-    # ---------------------------------------------------------------------------------------
-    marketMap = MarketMap(baseline)
-    # TODO
-    # metadata clear (불필요 key 값 삭제하기)
-    try:
-        mapJsKeys = {
-            "srcIndicatorOpt" : dumps(marketMap.meta),
-            "srcTicker" : marketMap.to_json(orient='index'),
-            "srcColors" : marketMap.colors.to_json(orient='index')
-        }
-        js = marketmap.javascript(**mapJsKeys) \
-             .save(os.path.join(BASE_DIR, r'src/js/'))
-
-        mapKeys = config.templateKeys()
-        mapKeys.merge(**marketmap.defaultMarketMapAttribute)
-        mapKeys["trading_date"] = f'{TRADING_DATE}\u0020\uc885\uac00\u0020\uae30\uc900'
-
-        if LOCAL_HOST:
-            # IF YOU ARE DEBUGGING IN LOCAL HOST, MINIFIED RESOURCES IS NOT USED AND WILL BE EXPANDED TO
-            # FULL TEXT RESOURCES. THE FULL TEXTED RESOURCES ARE ONLY AFFECT TO THE DEBUGGING ENVIRONMENT,
-            # IF YOU WANT TO CHANGE THE SOURCE, YOU NEED TO CHANGE THE TEMPLATE.
-            mapKeys.fulltext()
-        if not LOCAL_HOST:
-            mapKeys.route(ROUTER)
-        if ADSENSE:
-            mapKeys.merge(**ADSENSE_PROPERTY)
-        index = marketmap.html(**mapKeys).save(BASE_DIR)
-
-        context += [f'- [SUCCESS] Deploy Market-Map', marketMap.log, '']
-    except Exception as error:
-        context += [f'- [FAILED] Deploy Market-Map', f'  : {error}', '']
-
-
-    # ---------------------------------------------------------------------------------------
-    # BUILD BUBBLE
-    # ---------------------------------------------------------------------------------------
-    marketBubble = MarketBubble(baseline)
-    try:
-        bubbleJsKeys = {
-
-        }
-
-        bubbleKeys = config.templateKeys()
-        bubbleKeys.merge(**bubble.defaultBubbleAttribute)
-        bubbleKeys["trading_date"] = f'{TRADING_DATE}\u0020\uc885\uac00\u0020\uae30\uc900'
-
-        if LOCAL_HOST:
-            bubbleKeys.fulltext()
-        if not LOCAL_HOST:
-            bubbleKeys.route(ROUTER)
-        if ADSENSE:
-            bubbleKeys.merge(**ADSENSE_PROPERTY)
-        index = bubble.html(**bubbleKeys).save(os.path.join(BASE_DIR, 'bubble'))
-
-        context += [f'- [SUCCESS] Deploy Market-Bubble', marketBubble.log, '']
-    except Exception as error:
-        context += [f'- [FAILED] Deploy Market-Bubble', f'  : {error}', '']
-
 
     # ---------------------------------------------------------------------------------------
     # REPORT
@@ -198,7 +204,8 @@ if __name__ == "__main__":
     mail.subject = f'[{prefix}] BUILD BASELINE on {TRADING_DATE} {datetime.now(LOCAL_ZONE).strftime("%H:%M")}'
 
     if LOCAL_HOST:
-        print(f'{mail.subject}\n{mail.context}\n{baseline}\n{"-" * 50}\n{marketMap}')
+        print(f'{mail.subject}\n{mail.context}\n')
+        # print(f'{baseline}\n{"-" * 50}\n{marketMap}')
     else:
         mail.send()
 

@@ -7,6 +7,7 @@ from typing import Dict, List, Union
 import csscompressor, jsmin, os
 
 
+ADSENSE_ID: str = "ca-pub-7507574593260609"
 class deploymentResource:
 
     _root:str = ''

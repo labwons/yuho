@@ -16,13 +16,13 @@ defaultBubbleAttribute = {
         '',
         '\t<select name="x" class="bubble-select bubble-x"></select>',
         '\t<select name="y" class="bubble-select bubble-y"></select>',
-        '\t<div class="bubble-button bubble-edit"><i class="fa fa-edit"></i></div>',
-        '\t<div class="bubble-button bubble-sizing"><i class="fa fa-compress"></i></div>',
+        '\t<div class="bubble-button bubble-edit"><i class="fa"></i></div>',
+        # '\t<div class="bubble-button bubble-sizing"><i class="fa fa-compress"></i></div>',
         ''
     ]),
     "service_opt_r": ('\n' + '\t' * 5).join([
         '',
-        '\t<select name="classifier" class="bubble-select bubble-classify"></select>',
+        '\t<select name="sectors" class="bubble-select bubble-sectors"></select>',
         '\t<select name="tickers" class="bubble-select bubble-searchbar"><option></option></select>',
         ''
     ]),
@@ -71,7 +71,7 @@ class javascript:
         return
 
     def save(self, path:str):
-        file = os.path.join(path, 'marketmap.js')
+        file = os.path.join(path, 'bubble.js')
         with open(file, mode='w', encoding='utf-8') as js:
             js.write(self.src)
         return
