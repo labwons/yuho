@@ -396,6 +396,30 @@ h1, h2, h3, h4, h5, h6 {
 .service-section .service .service-app {
     flex: 1 1 auto;
 	display: flex;
+	position: relative;
+}
+
+.service-section .service .service-app .toolbox-on {
+	position: absolute;
+	top: 0;
+	right: 0;
+	z-index: 100;
+}
+
+.service-section .service .service-app .toolbox-on:hover {
+	cursor: pointer;
+	color: grey;
+}
+
+.service-section .service .service-app .toolbox-off {
+	padding-right: 5px;
+	z-index: 100;
+	background-color: white;
+}
+
+.service-section .service .service-app .toolbox-off:hover {
+	cursor: pointer;
+	color: grey;
 }
 
 .service-section .service .service-app .plot {
@@ -635,7 +659,6 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 
-
 /*--------------------------------------------------------------
 # Footer
 --------------------------------------------------------------*/
@@ -798,21 +821,9 @@ h1, h2, h3, h4, h5, h6 {
     }
 }
 
-@media (max-width: 768px) {
-    .footer-container {
-        padding: 0 20px;
-    }
-}
-
 @media screen and (max-width: 1023px) {
     .footer .footer-basis .footer-info .logo img {
         max-height: 48px;
-    }
-}
-
-@media screen and (max-width: 767px) {
-    .footer .footer-basis .footer-info .logo img {
-        max-height: 40px;
     }
 }
 
@@ -847,3 +858,216 @@ h1, h2, h3, h4, h5, h6 {
         text-align: center;
     }
 } 
+
+@media (max-width: 768px) {
+    .footer-container {
+        padding: 0 20px;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .footer .footer-basis .footer-info .logo img {
+        max-height: 40px;
+    }
+}
+
+
+/*--------------------------------------------------------------
+# Service - Market Map
+--------------------------------------------------------------*/
+.map-select {
+	-webkit-appearance: none; /* 크롬, 사파리 */
+    -moz-appearance: none;    /* 파이어폭스 */
+    appearance: none;         /* 기본 */
+    
+	flex: 1 0 auto;
+	min-width: 200px;
+    height: 28px;
+	color: #999;
+    margin: 0;
+    padding: 2px 8px;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    box-sizing: border-box;
+    cursor: pointer;
+    
+    background-image: url(/yuho/src/img/triangle_down.png);
+    background-repeat: no-repeat;
+    background-position: right 4px center;
+    background-size: 8px;
+    background-color: #fff;
+}
+
+.map-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 28px;
+    height: 28px;
+    margin: 0;
+    padding: 0;
+    border: 1px solid #aaa;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 18px;
+    color: #444;
+}
+
+.map-button:hover {
+	color: grey;
+}
+
+.map-searchbar {
+	min-width: 360px;
+}
+
+.fa-signal {
+    transform: scaleX(-1) rotate(-90deg);
+}
+
+.map-rewind {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 24px;
+    height: 24px;
+    margin: 0;
+    border: 1px solid #fff;
+    border-radius: 6px;
+    color: #fff;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 1.0s ease, visibility 1.0s ease;
+}
+
+.map-rewind.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.map-legend {
+    flex: 0 0 auto;
+	min-width: 80px;
+	max-height: 28px;
+	box-sizing: border-box;
+	display: flex;
+	flex-wrap: nowrap;
+	align-items: center;
+	justify-content: center;
+	font-size: 14px;
+	font-weight: 700;
+	color: white;
+}
+
+/* LAPTOP CASES */
+@media screen and (max-width: 1443px) {
+
+}
+
+/* TABLET CASES */
+@media screen and (max-width: 1023px) {
+
+}
+
+/* MOBILE CASES */
+@media screen and (max-width: 767px) {
+	.map-select {
+		flex: 1 1 auto;
+		min-width: 0;
+		width: 120px;
+		font-size: 11px !important;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
+	}	
+	
+	.map-button {
+		flex: 0 0 28px;
+	}
+	
+	.map-searchbar {
+		width: auto !important;
+	}
+	
+	.map-legend {
+		flex: 1 0 auto;
+		min-width: 40px;
+		max-height: 20px;
+		box-sizing: border-box;
+		display: flex;
+		flex-wrap: nowrap;
+		align-items: center;
+		justify-content: center;
+		font-size: 12px;
+		font-weight: 700;
+		color: white;
+	}	
+}
+
+
+/*--------------------------------------------------------------
+# Service - Bubble
+--------------------------------------------------------------*/
+.bubble-select {
+	-webkit-appearance: none; /* 크롬, 사파리 */
+    -moz-appearance: none;    /* 파이어폭스 */
+    appearance: none;         /* 기본 */
+    
+	flex: 1 0 auto;
+	min-width: 200px;
+    height: 28px;
+	color: #999;
+    margin: 0;
+    padding: 2px 8px;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    box-sizing: border-box;
+    cursor: pointer;
+    
+    background-image: url(/yuho/src/img/triangle_down.png);
+    background-repeat: no-repeat;
+    background-position: right 4px center;
+    background-size: 8px;
+    background-color: #fff;
+}
+
+.bubble-sectors {
+	flex: 1 1 auto;
+	min-width: 120px;
+}
+
+.bubble-searchbar {
+	min-width: 360px;
+}
+
+/* LAPTOP CASES */
+@media screen and (max-width: 1443px) {
+
+}
+
+/* TABLET CASES */
+@media screen and (max-width: 1023px) {
+
+}
+
+/* MOBILE CASES */
+@media screen and (max-width: 767px) {
+	.bubble-select {
+		flex: 1 1 auto;
+		min-width: 0;
+		width: 120px;
+		font-size: 11px !important;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
+	}	
+		
+	.bubble-searchbar {
+		width: auto !important;
+	}
+}
