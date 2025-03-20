@@ -31,18 +31,6 @@ class deploymentResource:
                 .render(router=self.router)
         with open(os.path.join(self.BASE_DIR, "src/css/style.css"), "w", encoding="utf-8") as css:
             css.write(style)
-
-        bubble = Environment(loader=FileSystemLoader(PATH.HTML.TEMPLATES)) \
-                 .get_template('bubble.css') \
-                 .render(router=self.router)
-        with open(os.path.join(self.BASE_DIR, "src/css/bubble.css"), "w", encoding="utf-8") as css:
-            css.write(bubble)
-
-        marketmap = Environment(loader=FileSystemLoader(PATH.HTML.TEMPLATES)) \
-                    .get_template('marketmap.css') \
-                    .render(router=self.router)
-        with open(os.path.join(self.BASE_DIR, "src/css/marketmap.css"), "w", encoding="utf-8") as css:
-            css.write(marketmap)
         return
 
     def minify(self):

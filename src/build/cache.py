@@ -43,6 +43,7 @@ if __name__ == "__main__":
     # except Exception as report:
     #     prefix_index = "FAILED"
     #     context += [f"- [{prefix_index}] MARKET INDEX: ", f'{report}', ""]
+    prefix_index = "PASS"
 
     try:
         spec = MarketSpec(update=True)

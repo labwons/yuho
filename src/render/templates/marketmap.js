@@ -313,7 +313,7 @@ $(document).ready(function(){
         setSearchBar('.map-searchbar', srcTicker);
         setScaleBar('.map-legend', srcIndicatorOpt[$('.map-option').val()]);
         setMap($('.map-option').val());
-    })
+    });
 
     $('.map-searchbar').on('select2:select', function(e) {
         const ticker = srcTicker[e.params.data.id];
@@ -322,115 +322,15 @@ $(document).ready(function(){
             eventClickTreemap(ticker.name);
         }, 1000);
     });
-
-    $('#plotly').on('plotly_doubleclick', function() {
-        console.log("@@");
-        setMap($('.map-option').val());
-    })
+	
+	$('#plotly').dblclick(function() {
+		setMap($('.map-option').val());
+	});
 
     $('#plotly').on('plotly_click', function(e, d){
         if (!VIEW_MODE) {
-//            if ($('g.slice').length == 1) {
-//            rewindOff();
-//            } else if (
-//            (!d.points[0].customdata.startsWith('W')) &&
-//            (!d.points[0].customdata.startsWith('G')) &&
-//            (!d.points[0].customdata.startsWith('T'))
-//            ) {
-//            rewindOn();
-//            } else {
-//            return;
-//            }
 
         }
     })
 
 })
-
-
-//function rewindOn(){
-//  if( !$('.map-rewind').attr('class').includes('show') ) {
-//    $('.map-rewind').toggleClass('show');
-//  }
-//}
-//
-//function rewindOff(){
-//  if( $('.map-rewind').attr('class').includes('show') ) {
-//    $('.map-rewind').toggleClass('show');
-//  }
-//}
-//
-///*--------------------------------------------------------------
-//# FETCH & BINDINGS
-//--------------------------------------------------------------*/
-//$(document).ready(async function(){
-//
-//
-//
-//  $('.map-reset').click(function(){
-//    setTreemap();
-//    rewindOff();
-//    setSearchSelector();
-//  })
-//
-//  $('.map-switch i').click(function(){
-//    if ( $(this).attr('class').includes('fa-map-o') ) {
-//      viewMd = 'treemap';
-//      setTreemap();
-//      $(this).removeClass('fa-map-o').addClass('fa-signal');
-//      $('.map-searchbar').prop('disabled', false);
-//    } else {
-//      viewMd = 'bar';
-//      setBarChart();
-//      rewindOff();
-//      $(this).removeClass('fa-signal').addClass('fa-map-o');
-//      $('.map-searchbar').prop('disabled', true);
-//
-//    }
-//    setTypeSelector();
-//  })
-//
-//  $('.map-searchbar').on('select2:select', function (e) {
-//    var ticker = e.params.data.id;
-//    if (ticker.startsWith('W')) {
-//      var elem = SRC[mapTyp].industry[ticker];
-//      clickTreemap(elem.name);
-//      return
-//    } else if (ticker.startsWith('G')) {
-//      var elem = SRC[mapTyp].sector[ticker];
-//      clickTreemap(elem.name);
-//      return
-//    } else {
-//      var elem = SRC.TICKERS[ticker];
-//      clickTreemap(elem.ceiling);
-//      setTimeout(function(){
-//        clickTreemap(elem.name);
-//      }, 1000);
-//    }
-//  });
-//
-//  $('.map-rewind').click(function(){
-//    if (viewMd == 'bar') {
-//      return;
-//    }
-//    !$('.slice').get(0).dispatchEvent(EVE);
-//    rewindOff();
-//  })
-//
-//  $('#market-map').on('plotly_click', function(e, d){
-//    if (viewMd == 'bar') {
-//      return;
-//    }
-//    if ($('g.slice').length == 1) {
-//      rewindOff();
-//    } else if (
-//      (!d.points[0].customdata.startsWith('W')) &&
-//      (!d.points[0].customdata.startsWith('G')) &&
-//      (!d.points[0].customdata.startsWith('T'))
-//    ) {
-//      rewindOn();
-//    } else {
-//      return;
-//    }
-//  })
-//})

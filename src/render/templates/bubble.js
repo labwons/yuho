@@ -14,7 +14,7 @@ var BARMODE = false; // 0: INDUSTRY, 1: SECTOR
 var bubbleLayout = {
 	dragmode: TOOLBOX ? "zoom" : false,
     margin:{
-        l:01,
+        l:20,
         r:0,
         t:0,
         b:35
@@ -41,10 +41,6 @@ var bubbleOption = {
       'toImage','select2d','lasso2d','resetScale2d'
     ]    
 };
-
-if (isTablet) {
-	TOOLBOX = true;
-}
 
 
 /*--------------------------------------------------------------
@@ -75,6 +71,11 @@ function setOption(cssSelector, jsonObj, initKey){
     });
 }
 
+function setAxisLabel(cssSelector, axis){
+	var selected = $(cssSelector).find('option:selected');
+	selected.text(axis + ': ' + selected.text());
+}
+
 function setSearchBar(cssSelector, jsonObj, sector){
     $(cssSelector)
     .select2({placeholder: "\uc885\ubaa9\uba85\u0020\uac80\uc0c9"}) // 종목명 검색
@@ -93,14 +94,14 @@ function setSearchBar(cssSelector, jsonObj, sector){
 
 function toggleToolbox() {
 	TOOLBOX = !TOOLBOX;
-	$('.bubble-edit i').removeClass((TOOLBOX ? 'fa-edit' : 'fa-lock'));
-	$('.bubble-edit i').addClass((TOOLBOX ? 'fa-lock' : 'fa-edit'));
-	
+
 	if(TOOLBOX) {
+		$('.toolbox-on').css({'display': 'none'});
 		$('.js-plotly-plot .plotly .modebar').css({
 			'display':'flex',
 			'background-color':'rgba(200, 200, 200, 0.4)'
 		});
+		$('.js-plotly-plot .plotly .modebar').prepend('<i class="toolbox-off fa fa-remove"></i>');
 		$('.js-plotly-plot .plotly .modebar-group').css({
 			'padding':'0'
 		});
@@ -110,7 +111,13 @@ function toggleToolbox() {
 		Plotly.relayout('plotly', {
 			'dragmode': "zoom",
 		})
+		$('.toolbox-off').click(function() {
+			$(this).remove();
+			toggleToolbox();
+		})
+		
 	} else {
+		$('.toolbox-on').css({'display': 'inline-block'});
 		var plot = document.getElementById('plotly');
 		$('.js-plotly-plot .plotly .modebar').css({'display':'none'});
 		Plotly.relayout('plotly', {
@@ -207,23 +214,25 @@ $(document).ready(function(){
 	setOption('.bubble-sectors', srcSectors, "ALL");
     setSearchBar('.bubble-searchbar', srcTickers, $('.bubble-sectors').val());
 	setBubble($('.bubble-x').val(), $('.bubble-y').val(), $('.bubble-sectors').val());
-
-	$('.bubble-edit i').addClass((TOOLBOX ? 'fa-lock' : 'fa-edit'));
+	setAxisLabel('.bubble-x', 'X');
+	setAxisLabel('.bubble-y', 'Y');
 	
-	$('.bubble-edit').click(function() {
+	$('.toolbox-on').click(function() {
 		toggleToolbox();
 	})
-	
+		
 	$('.bubble-sectors').on('change', function() {
 		setSearchBar('.bubble-searchbar', srcTickers, $(this).val());
 		setBubble($('.bubble-x').val(), $('.bubble-y').val(), $(this).val());
 	})
 	
 	$('.bubble-x').on('change', function() {
+		setAxisLabel('.bubble-x', 'X');
 		setBubble($(this).val(), $('.bubble-y').val(), $('.bubble-sectors').val());
 	})
 	
 	$('.bubble-y').on('change', function() {
+		setAxisLabel('.bubble-y', 'Y');
 		setBubble($('.bubble-x').val(), $(this).val(), $('.bubble-sectors').val());
 	})
 	

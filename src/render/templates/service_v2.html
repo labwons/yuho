@@ -40,7 +40,8 @@
                     <div class="service-opt-r">{{ service_opt_r }}</div>
                 </div>
                 <div class="service-app">
-                    <div class="plot" id="plotly">{{ app_icon }}</div>
+					{{ app_icon }}
+                    <div class="plot" id="plotly"></div>
                 </div>
                 <div class="service-footer">
 					<div class="service-legend">{{ service_items }}</div>
@@ -133,9 +134,7 @@
         <div class="copyright">
           &copy; Copyright LAB<strong>￦</strong>ONS. All Rights Reserved
         </div>
-        <div class="credits">
-          Designed By. YUHO PAPA
-        </div>
+        <div class="credits">Designed By. YUHOPA</div>
       </div>
     </footer>
     {% for _script in script if _script["pos"] == "bottom" %}

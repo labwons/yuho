@@ -10,13 +10,12 @@ import os
 
 defaultBubbleAttribute = {
     "title": "\uc885\ubaa9\u0020\ubd84\ud3ec BUBBLES",
-    "link": [{"rel": "stylesheet", "href": f"/src/css/bubble.min.css"}],
     "script": [{"src": f"/src/js/bubble.min.js", "pos": "bottom"}],
     "service_opt_l": ('\n' + '\t' * 5).join([
         '',
         '\t<select name="x" class="bubble-select bubble-x"></select>',
         '\t<select name="y" class="bubble-select bubble-y"></select>',
-        '\t<div class="bubble-button bubble-edit"><i class="fa"></i></div>',
+        # '\t<div class="bubble-button bubble-edit"><i class="fa"></i></div>',
         # '\t<div class="bubble-button bubble-sizing"><i class="fa fa-compress"></i></div>',
         ''
     ]),
@@ -26,6 +25,7 @@ defaultBubbleAttribute = {
         '\t<select name="tickers" class="bubble-select bubble-searchbar"><option></option></select>',
         ''
     ]),
+    "app_icon": '<span class="toolbox-on"><i class="fa fa-edit"></i></span>',
     # "service_items": '<span class="bubble-legend"></span>' * 7,
     "service_notice": (
             '\ubaa8\ub4e0\u0020\ud22c\uc790\uc758\u0020\ucc45\uc784\uc740\u0020\ub2f9\uc0ac\uc790\uc5d0\uac8c\u0020\uc788\uc2b5\ub2c8\ub2e4\u002e\u0020'

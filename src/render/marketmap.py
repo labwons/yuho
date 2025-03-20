@@ -10,7 +10,6 @@ import os
 
 defaultMarketMapAttribute = {
     "title": "\uc2dc\uc7a5\uc9c0\ub3c4 MARKET MAP",
-    "link": [{"rel": "stylesheet", "href": f"/src/css/marketmap.min.css"}],
     "script": [{"src": f"/src/js/marketmap.min.js", "pos": "bottom"}],
     "app_icon": '<i class="map-rewind fa fa-undo"></i>',
     "service_opt_l": ('\n' + '\t' * 5).join([
