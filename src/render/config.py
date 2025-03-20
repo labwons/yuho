@@ -55,7 +55,7 @@ class deploymentResource:
 
 class templateKeys(dict):
 
-    NAMING_KEY: Dict[str, str] = {'bubble': '종목 분포', 'macro': '경제 지표', 'portfolio': '투자 종목'}
+    NAMING_KEY: Dict[str, str] = {'bubble': '종목 분포', 'macro': '경제 지표', 'portfolio': '투자 기록'}
     def __init__(self):
         super().__init__(
             meta=[
@@ -158,13 +158,18 @@ class templateKeys(dict):
                 continue
 
 
+def siteMap(site:List=None):
+    if not site:
+        site = templateKeys.navigate()
+    print(site)
+
+
 if __name__ == "__main__":
-    # kwargs = Kwargs(False, False)
-    # print(kwargs)
+    # keys = templateKeys()
+    # print(f"{keys}")
+    # print("-" * 100)
+    # keys.route('/yuho')
+    # print(f"{keys}")
 
-    keys = templateKeys()
-    print(f"{keys}")
-    print("-" * 100)
-    keys.route('/yuho')
-    print(f"{keys}")
 
+    siteMap()
