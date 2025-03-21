@@ -16,6 +16,7 @@ if __name__ == "__main__":
         from .service.baseline import MarketBaseline
         from .service.bubble import MarketBubble
         from .service.marketmap import MarketMap
+        from .maintenance.sitemap import sitemap
     except ImportError:
         from src.common.path import PATH
         from src.common.report import eMail
@@ -27,6 +28,7 @@ if __name__ == "__main__":
         from src.build.service.baseline import MarketBaseline
         from src.build.service.bubble import MarketBubble
         from src.build.service.marketmap import MarketMap
+        from src.build.maintenance.sitemap import sitemap
     from datetime import datetime, timezone, timedelta
     from json import dumps
     from pandas import set_option as PRINT_DATA
@@ -90,6 +92,10 @@ if __name__ == "__main__":
         while now.hour == 3 and now.minute < 31:
             sleep(30)
             now = CLOCK(LOCAL_ZONE)
+
+    # ---------------------------------------------------------------------------------------
+    # UPDATE PORTFOLIO
+    # ---------------------------------------------------------------------------------------
 
 
     # ---------------------------------------------------------------------------------------
@@ -191,6 +197,8 @@ if __name__ == "__main__":
         context += [f'- [SUCCESS] CSS Deployment and Minify Resources', '']
     except Exception as error:
         context += [f'- [FAILED] CSS Deployment and Minify Resources', f'  : {error}', '']
+
+    sitemap(BASE_DIR, "https://labwons.com", os.path.join(BASE_DIR, "sitemap.xml"))
 
 
     # ---------------------------------------------------------------------------------------

@@ -1,7 +1,9 @@
 try:
     from ..common.path import PATH
+    from ..build.service.portfolio import ONSITE
 except ImportError:
     from src.common.path import PATH
+    from src.build.service.portfolio import ONSITE
 from jinja2 import Environment, FileSystemLoader
 from typing import Dict, List, Union
 import csscompressor, jsmin, os
@@ -108,14 +110,13 @@ class templateKeys(dict):
             if '.' in content or content == 'src':
                 continue
             nav.append({'href': f'/{content}', 'content': cls.NAMING_KEY[content]})
-
-            # TODO
-            # Portfolio의 경우 Sub Menu를 href: /{종목코드} text: 종목명 으로 변경
-
             sub = []
             for sub_content in os.listdir(os.path.join(PATH.DOCS, content)):
                 if not '.' in sub_content and sub_content != "src":
-                    sub.append({'href': f'/{content}/{sub_content}', 'content': sub_content})
+                    name = sub_content
+                    if name in ONSITE:
+                        name = ONSITE[name]["name"]
+                    sub.append({'href': f'/{content}/{sub_content}', 'content': name})
             nav[-1].update({'sub': sub})
         return nav
 
